@@ -1,4 +1,5 @@
 const User = require('../models/user');
+
 const getUsers = async (req, res) => {
   try {
     const users = await User.find().select('-password').sort({ createdAt: -1 });
@@ -70,4 +71,24 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { getUsers, getUserById, createUser, updateUser };
+const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (req.user.id === id) {
+      return res.status(400).json({ message: 'No puedes eliminarte a ti mismo' });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    await User.findByIdAndDelete(id);
+    res.json({ message: 'Usuario eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al eliminar el usuario' });
+  }
+};
+
+module.exports = { getUsers, getUserById, createUser, updateUser, deleteUser };

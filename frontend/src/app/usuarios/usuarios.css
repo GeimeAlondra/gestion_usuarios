@@ -45,6 +45,16 @@
   font-size: 0.95rem;
 }
 
+.list-success {
+  padding: 0.65rem 0.9rem;
+  border-radius: 6px;
+  background-color: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #15803d;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
 .list-error {
   padding: 0.65rem 0.9rem;
   border-radius: 6px;
@@ -95,6 +105,13 @@
   background-color: #fafafa;
 }
 
+/* Celda de acciones */
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
 /* Botón editar */
 .btn-edit {
   display: inline-block;
@@ -110,6 +127,122 @@
 
 .btn-edit:hover {
   background-color: #e5e7eb;
+}
+
+/* Botón eliminar */
+.btn-delete {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.btn-delete:hover:not(:disabled) {
+  background-color: #fee2e2;
+  border-color: #f87171;
+}
+
+.btn-delete:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Modal de confirmación */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 1.75rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.modal-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.modal-body {
+  margin: 0 0 1.1rem;
+  font-size: 0.9rem;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.modal-error {
+  margin-bottom: 1rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: 6px;
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  font-size: 0.82rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+}
+
+.btn-cancel {
+  padding: 0.45rem 1rem;
+  background-color: #f3f4f6;
+  color: #374151;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-cancel:hover:not(:disabled) {
+  background-color: #e5e7eb;
+}
+
+.btn-cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-confirm-delete {
+  padding: 0.45rem 1rem;
+  background-color: #dc2626;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.btn-confirm-delete:hover:not(:disabled) {
+  background-color: #b91c1c;
+}
+
+.btn-confirm-delete:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* Badges */

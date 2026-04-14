@@ -7,6 +7,10 @@
       <a routerLink="/usuarios/crear" class="btn-new">Nuevo usuario</a>
     </div>
 
+    @if (deleteSuccess) {
+      <div class="list-success">{{ deleteSuccess }}</div>
+    }
+
     @if (isLoading) {
       <p class="list-loading">Cargando usuarios...</p>
     }
@@ -47,8 +51,17 @@
                     </span>
                   </td>
                   <td>{{ user.createdAt | date: 'dd/MM/yyyy' }}</td>
-                  <td>
+                  <td class="actions-cell">
                     <a [routerLink]="['/usuarios/editar', user._id]" class="btn-edit">Editar</a>
+                    <button
+                      type="button"
+                      class="btn-delete"
+                      [disabled]="user._id === currentUserId"
+                      [title]="user._id === currentUserId ? 'No puedes eliminarte a ti mismo' : 'Eliminar usuario'"
+                      (click)="openDeleteModal(user)"
+                    >
+                      Eliminar
+                    </button>
                   </td>
                 </tr>
               }
@@ -59,3 +72,29 @@
     }
   </main>
 </div>
+
+@if (userToDelete) {
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">Eliminar usuario</h3>
+      <p class="modal-body">
+        ¿Estás seguro de que deseas eliminar a
+        <strong>{{ userToDelete.name }}</strong>?
+        Esta acción no se puede deshacer y el usuario perderá el acceso de inmediato.
+      </p>
+
+      @if (deleteError) {
+        <div class="modal-error">{{ deleteError }}</div>
+      }
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="cancelDelete()" [disabled]="isDeleting">
+          Cancelar
+        </button>
+        <button type="button" class="btn-confirm-delete" (click)="confirmDelete()" [disabled]="isDeleting">
+          {{ isDeleting ? 'Eliminando...' : 'Sí, eliminar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
