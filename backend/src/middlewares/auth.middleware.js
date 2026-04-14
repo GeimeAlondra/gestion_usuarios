@@ -1,6 +1,7 @@
+const User = require('../models/user');
 const { verifyToken } = require('../utils/jwt');
 
-const protect = (req, res, next) => {
+const protect = async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -10,7 +11,17 @@ const protect = (req, res, next) => {
   const token = authHeader.split(' ')[1];
 
   try {
-    req.user = verifyToken(token);
+    const decoded = verifyToken(token);
+
+    const user = await User.findById(decoded.id).select('_id role isActive');
+    if (!user) {
+      return res.status(401).json({ message: 'Usuario no encontrado' });
+    }
+    if (!user.isActive) {
+      return res.status(401).json({ message: 'Cuenta desactivada' });
+    }
+
+    req.user = decoded;
     next();
   } catch {
     return res.status(401).json({ message: 'Token inválido o expirado' });

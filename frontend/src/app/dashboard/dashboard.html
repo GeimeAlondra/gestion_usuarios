@@ -1,5 +1,49 @@
-<div class="dashboard-container">
-  <h1 class="dashboard-title">Bienvenido al Dashboard</h1>
-  <p class="dashboard-greeting">Hola, <strong>{{ userName }}</strong></p>
-  <button type="button" class="btn-logout" (click)="logout()">Cerrar sesión</button>
+<div class="layout">
+  <app-navbar />
+
+  <main class="main-content">
+    <h2 class="section-title">Resumen general</h2>
+
+    @if (isLoading) {
+      <p class="stats-loading">Cargando estadísticas...</p>
+    }
+
+    @if (statsError) {
+      <div class="stats-error">{{ statsError }}</div>
+    }
+
+    @if (!isLoading && !statsError && stats) {
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Total de usuarios</span>
+          <span class="stat-value">{{ stats.total }}</span>
+        </div>
+        <div class="stat-card stat-card--active">
+          <span class="stat-label">Usuarios activos</span>
+          <span class="stat-value">{{ stats.activos }}</span>
+        </div>
+        <div class="stat-card stat-card--inactive">
+          <span class="stat-label">Usuarios inactivos</span>
+          <span class="stat-value">{{ stats.inactivos }}</span>
+        </div>
+        <div class="stat-card stat-card--roles">
+          <span class="stat-label">Desglose por rol</span>
+          <ul class="stat-roles">
+            <li>
+              <span class="role-name">Admin</span>
+              <span class="role-count">{{ stats.porRol.Admin }}</span>
+            </li>
+            <li>
+              <span class="role-name">Editor</span>
+              <span class="role-count">{{ stats.porRol.Editor }}</span>
+            </li>
+            <li>
+              <span class="role-name">Viewer</span>
+              <span class="role-count">{{ stats.porRol.Viewer }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    }
+  </main>
 </div>

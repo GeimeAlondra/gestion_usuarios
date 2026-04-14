@@ -1,0 +1,100 @@
+<div class="layout">
+  <app-navbar />
+
+  <main class="main-content">
+    <div class="section-header">
+      <h2 class="section-title">Usuarios</h2>
+      <a routerLink="/usuarios/crear" class="btn-new">Nuevo usuario</a>
+    </div>
+
+    @if (deleteSuccess) {
+      <div class="list-success">{{ deleteSuccess }}</div>
+    }
+
+    @if (isLoading) {
+      <p class="list-loading">Cargando usuarios...</p>
+    }
+
+    @if (loadError) {
+      <div class="list-error">{{ loadError }}</div>
+    }
+
+    @if (!isLoading && !loadError) {
+      @if (users.length === 0) {
+        <p class="list-empty">No hay usuarios registrados.</p>
+      } @else {
+        <div class="table-wrapper">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Fecha de registro</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of users; track user._id) {
+                <tr>
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>
+                    <span class="badge badge--{{ user.role | lowercase }}">
+                      {{ user.role }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge" [class.badge--active]="user.isActive" [class.badge--inactive]="!user.isActive">
+                      {{ user.isActive ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+                  <td>{{ user.createdAt | date: 'dd/MM/yyyy' }}</td>
+                  <td class="actions-cell">
+                    <a [routerLink]="['/usuarios/editar', user._id]" class="btn-edit">Editar</a>
+                    <button
+                      type="button"
+                      class="btn-delete"
+                      [disabled]="user._id === currentUserId"
+                      [title]="user._id === currentUserId ? 'No puedes eliminarte a ti mismo' : 'Eliminar usuario'"
+                      (click)="openDeleteModal(user)"
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </main>
+</div>
+
+@if (userToDelete) {
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <h3 class="modal-title">Eliminar usuario</h3>
+      <p class="modal-body">
+        ¿Estás seguro de que deseas eliminar a
+        <strong>{{ userToDelete.name }}</strong>?
+        Esta acción no se puede deshacer y el usuario perderá el acceso de inmediato.
+      </p>
+
+      @if (deleteError) {
+        <div class="modal-error">{{ deleteError }}</div>
+      }
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="cancelDelete()" [disabled]="isDeleting">
+          Cancelar
+        </button>
+        <button type="button" class="btn-confirm-delete" (click)="confirmDelete()" [disabled]="isDeleting">
+          {{ isDeleting ? 'Eliminando...' : 'Sí, eliminar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
