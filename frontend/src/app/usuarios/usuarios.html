@@ -2,7 +2,10 @@
   <app-navbar />
 
   <main class="main-content">
-    <h2 class="section-title">Usuarios</h2>
+    <div class="section-header">
+      <h2 class="section-title">Usuarios</h2>
+      <a routerLink="/usuarios/crear" class="btn-new">Nuevo usuario</a>
+    </div>
 
     @if (isLoading) {
       <p class="list-loading">Cargando usuarios...</p>
