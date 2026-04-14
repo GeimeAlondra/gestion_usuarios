@@ -8,7 +8,7 @@ const connectDB = require('./config/db');
 
 const authRoutes = require('./routes/auth.routes');
 const statsRoutes = require('./routes/stats.routes');
-const usersRoutes = require('./routes/users.routes');
+const usersRoutes = require('./routes/user.routes');
 
 const app = express();
 
