@@ -2,7 +2,7 @@ const User = require('../models/user');
 const { generateToken } = require('../utils/jwt');
 
 const register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -10,7 +10,7 @@ const register = async (req, res) => {
       return res.status(409).json({ message: 'El email ya está registrado' });
     }
 
-    const user = await User.create({ name, email, password, role });
+    const user = await User.create({ name, email, password, role: 'Viewer' });
 
     res.status(201).json({
       _id: user._id,
