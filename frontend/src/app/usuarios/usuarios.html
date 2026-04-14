@@ -28,6 +28,7 @@
                 <th>Rol</th>
                 <th>Estado</th>
                 <th>Fecha de registro</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -46,6 +47,9 @@
                     </span>
                   </td>
                   <td>{{ user.createdAt | date: 'dd/MM/yyyy' }}</td>
+                  <td>
+                    <a [routerLink]="['/usuarios/editar', user._id]" class="btn-edit">Editar</a>
+                  </td>
                 </tr>
               }
             </tbody>

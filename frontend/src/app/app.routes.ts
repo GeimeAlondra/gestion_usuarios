@@ -12,6 +12,7 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [adminGuard] },
   { path: 'usuarios', component: UsuariosComponent, canActivate: [adminGuard] },
   { path: 'usuarios/crear', component: CrearUsuarioComponent, canActivate: [adminGuard] },
+  { path: 'usuarios/editar/:id', component: CrearUsuarioComponent, canActivate: [adminGuard] },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

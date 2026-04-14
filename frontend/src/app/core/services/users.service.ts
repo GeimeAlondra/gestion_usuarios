@@ -18,6 +18,14 @@ export interface CreateUserDto {
   role: 'Admin' | 'Editor' | 'Viewer';
 }
 
+export interface UpdateUserDto {
+  name?: string;
+  email?: string;
+  password?: string;
+  role?: 'Admin' | 'Editor' | 'Viewer';
+  isActive?: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UsersService {
   private apiUrl = 'http://localhost:3000/api/users';
@@ -28,7 +36,15 @@ export class UsersService {
     return this.http.get<User[]>(this.apiUrl);
   }
 
+  getUserById(id: string): Observable<User> {
+    return this.http.get<User>(`${this.apiUrl}/${id}`);
+  }
+
   createUser(data: CreateUserDto): Observable<User> {
     return this.http.post<User>(this.apiUrl, data);
+  }
+
+  updateUser(id: string, data: UpdateUserDto): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${id}`, data);
   }
 }
