@@ -1,0 +1,108 @@
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: sans-serif;
+}
+
+.main-content {
+  padding: 2rem;
+}
+
+.section-title {
+  margin: 0 0 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.list-loading,
+.list-empty {
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.list-error {
+  padding: 0.65rem 0.9rem;
+  border-radius: 6px;
+  background-color: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #b91c1c;
+  font-size: 0.875rem;
+}
+
+.table-wrapper {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.users-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.users-table thead {
+  background-color: #4f46e5;
+  color: #fff;
+}
+
+.users-table th {
+  padding: 0.85rem 1.25rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.users-table td {
+  padding: 0.85rem 1.25rem;
+  color: #333;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.users-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.users-table tbody tr:hover {
+  background-color: #fafafa;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge--admin {
+  background-color: #ede9fe;
+  color: #5b21b6;
+}
+
+.badge--editor {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge--viewer {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.badge--active {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.badge--inactive {
+  background-color: #fef2f2;
+  color: #b91c1c;
+}

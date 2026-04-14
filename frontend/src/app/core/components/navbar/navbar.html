@@ -1,0 +1,21 @@
+<nav class="navbar">
+  <span class="navbar-brand">Gestión de Usuarios</span>
+
+  <ul class="navbar-menu">
+    <li>
+      <a routerLink="/dashboard" routerLinkActive="nav-link--active" class="nav-link">
+        Inicio
+      </a>
+    </li>
+    <li>
+      <a routerLink="/usuarios" routerLinkActive="nav-link--active" class="nav-link">
+        Usuarios
+      </a>
+    </li>
+  </ul>
+
+  <div class="navbar-user">
+    <span class="navbar-username">{{ userName }}</span>
+    <button type="button" class="btn-logout" (click)="logout()">Cerrar sesión</button>
+  </div>
+</nav>

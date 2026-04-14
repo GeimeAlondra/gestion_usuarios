@@ -1,0 +1,54 @@
+<div class="layout">
+  <app-navbar />
+
+  <main class="main-content">
+    <h2 class="section-title">Usuarios</h2>
+
+    @if (isLoading) {
+      <p class="list-loading">Cargando usuarios...</p>
+    }
+
+    @if (loadError) {
+      <div class="list-error">{{ loadError }}</div>
+    }
+
+    @if (!isLoading && !loadError) {
+      @if (users.length === 0) {
+        <p class="list-empty">No hay usuarios registrados.</p>
+      } @else {
+        <div class="table-wrapper">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Fecha de registro</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of users; track user._id) {
+                <tr>
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>
+                    <span class="badge badge--{{ user.role | lowercase }}">
+                      {{ user.role }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge" [class.badge--active]="user.isActive" [class.badge--inactive]="!user.isActive">
+                      {{ user.isActive ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+                  <td>{{ user.createdAt | date: 'dd/MM/yyyy' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </main>
+</div>
