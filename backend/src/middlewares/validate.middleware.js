@@ -6,10 +6,6 @@ const registerRules = [
   body('password')
     .isLength({ min: 8 })
     .withMessage('La contraseña debe tener al menos 8 caracteres'),
-  body('role')
-    .optional()
-    .isIn(['Admin', 'Editor', 'Viewer'])
-    .withMessage('Rol inválido. Valores permitidos: Admin, Editor, Viewer'),
 ];
 
 const validate = (req, res, next) => {
