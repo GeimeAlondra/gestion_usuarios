@@ -1,0 +1,36 @@
+.tmo-navbar {
+  background: #131822;
+  border-bottom: 1px solid #232a36;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: #facc15 !important;
+}
+
+.navbar-brand span {
+  font-size: 1rem;
+  background: #1e2a3a;
+  color: #facc15;
+  padding: 4px 10px;
+  border-radius: 20px;
+  margin-left: 8px;
+}
+
+.nav-link {
+  color: #94a3b8 !important;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: white !important;
+}
+
+.nav-link.active {
+  color: #facc15 !important;
+}
+
+.user-info {
+  color: #cbd5e1;
+  font-size: 0.85rem;
+}

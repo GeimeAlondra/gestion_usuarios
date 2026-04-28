@@ -63,6 +63,14 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  /*
+  // tipado para evitar errores
+  getUser(): LoginResponse['user'] | null {
+    const stored = localStorage.getItem('user');
+    return stored ? JSON.parse(stored) : null;
+  }
+  */
+ 
   getUser(): any {
     const stored = localStorage.getItem('user');
     return stored ? JSON.parse(stored) : null;

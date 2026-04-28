@@ -9,6 +9,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth.routes');
 const statsRoutes = require('./routes/stats.routes');
 const usersRoutes = require('./routes/user.routes');
+const mangaRoutes = require('./routes/manga.routes');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/users', usersRoutes);
+app.use('/api/mangas', mangaRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

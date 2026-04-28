@@ -1,0 +1,101 @@
+<app-manga-navbar></app-manga-navbar>
+
+<div class="container">
+
+  <h2>
+    {{ isEditMode ? 'Editar Manga' : 'Añadir Manga' }}
+  </h2>
+
+  <form [formGroup]="form" (ngSubmit)="save()">
+
+    <div class="row g-0">
+      <label class="form-label">Título</label>
+      <input formControlName="title" placeholder="Título">
+      @if (title?.invalid && title?.touched) {
+      <small class="text-danger">
+        Este campo no puede quedar vacío
+      </small>
+      }
+    </div>
+
+    <div class="row g-0">
+      <label class="form-label">Estado</label>
+      <select formControlName="status">
+
+        <option value="emision">En emisión</option>
+        <option value="finalizado">Finalizado</option>
+        <option value="proximamente">Próximamente</option>
+
+      </select>
+    </div>
+
+    <div class="row g-0">
+      <label class="form-label">Genero</label>
+      <input formControlName="genre" placeholder="Género">
+      @if (genre?.invalid && genre?.touched) {
+      <small class="text-danger">
+        Este campo no puede quedar vacío
+      </small>
+      }
+    </div>
+
+    <div class="row g-0">
+      <label class="form-label">Año publicado</label>
+      <input type="number" formControlName="year" placeholder="Año">
+      @if (year?.invalid && year?.touched) {
+      <small class="text-danger">
+        Coloque un año valido, entre 1900 y el año actual
+      </small>
+      }
+    </div>
+
+    <div class="row g-0">
+      <label class="form-label">Capitulos</label>
+      <input type="number" formControlName="chapters" placeholder="Capítulos">
+    </div>
+
+    <div class="row g-0">
+      <label class="form-label">Autor</label>
+      <input formControlName="author" placeholder="Autor">
+      @if (author?.invalid && author?.touched) {
+      <small class="text-danger">
+        Coloque un nombre de autor válido o coloque "Anonimo".
+      </small>
+      }
+    </div>
+
+    <div class="row g-0">
+      <label class="form-label">Sinopsis</label>
+      <textarea formControlName="synopsis" placeholder="Sinopsis"></textarea>
+      @if (synopsis?.invalid && synopsis?.touched) {
+      <small class="text-danger">
+        Capacidad máxima de texto superada, maximo 2000 carateres
+      </small>
+      }
+    </div>
+
+    <div class="row g-0">
+      <label class="form-label">Imagen URL</label>
+      <input formControlName="coverUrl" placeholder="URL portada">
+      @if (coverUrl?.invalid && coverUrl?.touched) {
+      <small class="text-danger">
+        Ingrese un formato de url válida
+      </small>
+      }
+    </div>
+
+    <div class="form-actions">
+
+      <button type="button" class="btn-cancel" routerLink="/mangas">
+        Cancelar
+      </button>
+
+      <button type="submit" class="btn-submit">
+        {{ isEditMode ? 'Editar Manga' : 'Guardar Manga' }}
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
