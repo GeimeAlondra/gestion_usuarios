@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #0b0f16;
   font-family: sans-serif;
 }
 
@@ -13,7 +13,7 @@
 }
 
 .form-card {
-  background: #fff;
+  background: #131822;
   border-radius: 10px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   padding: 2rem 2.5rem;
@@ -25,7 +25,7 @@
   margin: 0 0 1.5rem;
   font-size: 1.2rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #facc15;
 }
 
 .alert {
@@ -50,8 +50,12 @@
 .label {
   font-size: 0.85rem;
   font-weight: 500;
-  color: #374151;
+  color: white;
   margin-bottom: 0.35rem;
+}
+
+input::placeholder {
+  color: rgba(31, 29, 29, 0.74); /* gris suave */
 }
 
 .input {
@@ -59,8 +63,8 @@
   border: 1px solid #d1d5db;
   border-radius: 6px;
   font-size: 0.9rem;
-  color: #1a1a1a;
-  background: #fff;
+  color: black;
+  background: grey;
   transition: border-color 0.15s;
   outline: none;
 }
@@ -102,12 +106,12 @@
 }
 
 .btn--primary {
-  background-color: #4f46e5;
-  color: #fff;
+  background-color: #facc15;
+  color: black;
 }
 
 .btn--primary:hover:not(:disabled) {
-  background-color: #4338ca;
+  background-color: yellow;
 }
 
 .btn--primary:disabled {

@@ -1,1 +1,12 @@
-/* You can add global styles to this file, and also import other style files */
+@import "bootstrap-icons/font/bootstrap-icons.css";
+
+:root {
+  --background-general: #0b0f16;
+  --text-color-general: white;
+  --buttom-color-general: #facc15;
+}
+
+body {
+  background: #0b0f16;
+  margin: 15px;
+}

@@ -1,0 +1,109 @@
+.container {
+  padding: 2rem;
+  color: #eef2ff;
+  background: #0b0f16;
+  min-height: 100vh;
+}
+
+/* TITLE */
+h2 {
+  font-size: 1.6rem;
+  margin-bottom: 1.5rem;
+  color: #facc15;
+  letter-spacing: 0.5px;
+}
+
+/* FORM CARD */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+
+  max-width: 560px;
+
+  padding: 1.8rem;
+
+  background: #10141e;
+  border: 1px solid #1f293d;
+  border-radius: 14px;
+
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* INPUTS */
+input,
+select,
+textarea {
+  padding: 10px 12px;
+
+  border-radius: 8px;
+  border: 1px solid #263244;
+
+  background: #0f172a;
+  color: #eef2ff;
+
+  outline: none;
+
+  transition: 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #facc15;
+  box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.15);
+}
+
+/* TEXTAREA */
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ACTIONS */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.8rem;
+
+  margin-top: 0.8rem;
+}
+
+/* CANCEL */
+.btn-cancel {
+  padding: 10px 14px;
+
+  background: transparent;
+  color: #cbd5e1;
+
+  border: 1px solid #2a3a52;
+  border-radius: 8px;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-cancel:hover {
+  background: #1f293d;
+}
+
+/* SUBMIT */
+.btn-submit {
+  padding: 10px 16px;
+
+  background: #facc15;
+  color: #0b0f16;
+
+  border: none;
+  border-radius: 8px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-submit:hover {
+  background: #eab308;
+  transform: translateY(-1px);
+}

@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { DatePipe, LowerCasePipe } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../core/components/navbar/navbar';
 import { UsersService, User } from '../core/services/users.service';
 import { AuthService } from '../core/services/auth.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-usuarios',
@@ -14,6 +15,7 @@ import { AuthService } from '../core/services/auth.service';
 export class UsuariosComponent implements OnInit {
   private usersService = inject(UsersService);
   private authService = inject(AuthService);
+  private router = inject(Router)
   private cdr = inject(ChangeDetectorRef);
 
   users: User[] = [];
@@ -30,22 +32,29 @@ export class UsuariosComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.loadUsers();
+    });
+
     this.loadUsers();
   }
 
   private loadUsers(): void {
     this.isLoading = true;
     this.loadError = '';
+
     this.usersService.getUsers().subscribe({
       next: (data) => {
-        this.users = data;
+        this.users = [...data];
         this.isLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.loadError = 'No se pudo cargar la lista de usuarios.';
         this.isLoading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
     });
   }
@@ -72,22 +81,22 @@ export class UsuariosComponent implements OnInit {
 
     this.usersService.deleteUser(idToDelete).subscribe({
       next: () => {
-        this.users = this.users.filter((u) => u._id !== idToDelete);
+        this.users = [...this.users.filter((u) => u._id !== idToDelete)];
         this.userToDelete = null;
         this.isDeleting = false;
         this.deleteSuccess = `El usuario "${nameToDelete}" fue eliminado correctamente.`;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
 
         setTimeout(() => {
           this.deleteSuccess = '';
-          this.cdr.detectChanges();
+          this.cdr.markForCheck();
         }, 4000);
       },
       error: (err) => {
         this.deleteError =
           err?.error?.message ?? 'No se pudo eliminar el usuario. Intenta de nuevo.';
         this.isDeleting = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
     });
   }

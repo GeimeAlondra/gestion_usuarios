@@ -11,6 +11,7 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrl: './login.css'
 })
 export class LoginComponent {
+
   loginForm: FormGroup;
   isLoading = false;
   serverError: string | null = null;
@@ -20,16 +21,19 @@ export class LoginComponent {
     private router: Router,
     private authService: AuthService
   ) {
+
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
     });
+
   }
 
   get email() { return this.loginForm.get('email')!; }
   get password() { return this.loginForm.get('password')!; }
 
   onSubmit(): void {
+
     if (this.loginForm.invalid) return;
 
     this.isLoading = true;
@@ -38,22 +42,60 @@ export class LoginComponent {
     const { email, password } = this.loginForm.value;
 
     this.authService.login({ email, password }).subscribe({
+
       next: (res) => {
+
         this.isLoading = false;
+
+        /* Guardar sesión */
         localStorage.setItem('token', res.token);
         localStorage.setItem('user', JSON.stringify(res.user));
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err: HttpErrorResponse) => {
-        this.isLoading = false;
-        if (err.status === 401) {
-          this.serverError = 'Credenciales inválidas';
-        } else if (err.status === 403) {
-          this.serverError = 'Tu cuenta está desactivada';
+
+        const role = res.user.role;
+
+        /* Redirección por rol */
+        if (role === 'Admin') {
+
+          this.router.navigate(['/dashboard']);
+
+        } else if (role === 'Editor') {
+
+          this.router.navigate(['/mangas']);
+
+        } else if (role === 'Viewer') {
+
+          this.router.navigate(['/mangas']);
+
         } else {
-          this.serverError = 'Error en el servidor, intenta más tarde';
+
+          this.router.navigate(['/login']);
+
         }
+
+      },
+
+      error: (err: HttpErrorResponse) => {
+
+        this.isLoading = false;
+
+        if (err.status === 401) {
+
+          this.serverError = 'Credenciales inválidas';
+
+        } else if (err.status === 403) {
+
+          this.serverError = 'Tu cuenta está desactivada';
+
+        } else {
+
+          this.serverError = 'Error en el servidor, intenta más tarde';
+
+        }
+
       }
+
     });
+
   }
+
 }
