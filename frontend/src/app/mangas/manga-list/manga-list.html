@@ -87,29 +87,22 @@
 
 <!-- MODAL DELETE -->
 @if (mangaToDelete) {
-
 <div class="manga-modal-overlay" (click)="cancelDelete()">
   <div class="manga-modal-delete" (click)="$event.stopPropagation()">
-    <h3 class="manga-modal-title">
-      
-      Eliminar Manga
-    </h3>
-
+    <h3 class="manga-modal-title border-bottom pb-2">Eliminar Manga</h3>
     <p class="manga-modal-body">
       ¿Seguro que deseas eliminar el manga
-      <strong>
-        {{ mangaToDelete.title }}
-      </strong>?
+      <strong>{{ mangaToDelete.title }}</strong>?
       Esta accion no se puede deshacer.
     </p>
 
-    <div class="manga-modal-actions">
+    <div class="manga-modal-actions border-top pt-3 mt-2">
 
-      <button class="btn-cancel" (click)="cancelDelete()">
+      <button type="button" class="btn-cancel" (click)="cancelDelete()">
         Cancelar
       </button>
 
-      <button class="btn-confirm-delete" (click)="confirmDelete()">
+      <button type="button" class="btn-confirm-delete" (click)="confirmDelete()">
         <i class="bi bi-exclamation-triangle-fill"></i>
         {{ isDeleting ? 'Eliminando...' : 'Eliminar' }}
       </button>
