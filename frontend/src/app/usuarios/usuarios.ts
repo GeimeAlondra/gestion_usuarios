@@ -55,7 +55,7 @@ export class UsuariosComponent implements OnInit {
 
    this.usersService.getUsers().subscribe({
      next: (data) => {
-       this.users = [...data];
+       this.users = data.filter(u => u._id !== this.currentUserId);
        this.isLoading = false;
        this.cdr.markForCheck();
      },

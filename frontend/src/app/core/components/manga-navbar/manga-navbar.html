@@ -4,7 +4,7 @@
     <a class="navbar-brand" routerLink="/mangas">
       <i class="bi bi-book-half"></i>
       TMO Library
-      <span *ngIf="isAdmin() || isEditor()">{{ user?.role }}</span>
+     <!-- <span *ngIf="isAdmin() || isEditor()">{{ user?.role }}</span> -->
     </a>
 
     <!-- MOBILE BUTTON -->
@@ -39,8 +39,7 @@
           </a>
           <ul class="dropdown-menu">
             <li>
-              <a class="dropdown-item" routerLink="/dashboard" routerLinkActive="active"
-                >Dashboard</a
+              <a class="dropdown-item" routerLink="/dashboard" routerLinkActive="active">Estadísticas</a
               >
             </li>
             <li>
@@ -57,6 +56,9 @@
 
       <ul class="navbar-nav ms-auto">
         <li class="nav-item dropdown">
+            <a class="navbar-brand" routerLink="/mangas">
+              <span *ngIf="isAdmin() || isEditor()">{{ user?.role }}</span>
+            </a>
           <img
             [src]="'icons/perfil.svg'"
             class="avatar dropdown-toggle rounded-circle"
