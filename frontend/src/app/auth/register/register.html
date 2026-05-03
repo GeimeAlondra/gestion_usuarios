@@ -37,17 +37,12 @@
           placeholder="correo@ejemplo.com"
           [class.input-error]="(email.invalid && email.touched) || !!emailServerError"
         />
-        @if (email.touched) {
-          @if (email.errors?.['required']) {
-            <span class="error-msg">El correo es requerido.</span>
-          } @else if (email.errors?.['email']) {
-            <span class="error-msg">Ingresa un correo válido.</span>
-          } @else if (email.errors?.['serverError']) {
-            <span class="error-msg">{{ email.errors?.['serverError'] }}</span>
-          }
-        }
         @if (emailServerError) {
           <span class="error-msg">{{ emailServerError }}</span>
+        } @else if (email.touched && email.errors?.['required']) {
+          <span class="error-msg">El correo es requerido.</span>
+        } @else if (email.touched && email.errors?.['email']) {
+          <span class="error-msg">Ingresa un correo válido.</span>
         }
       </div>
 

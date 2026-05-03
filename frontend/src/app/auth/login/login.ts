@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -19,7 +19,8 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {
 
     this.loginForm = this.fb.group({
@@ -55,23 +56,14 @@ export class LoginComponent {
 
         /* Redirección por rol */
         if (role === 'Admin') {
-
           this.router.navigate(['/dashboard']);
-
         } else if (role === 'Editor') {
-
           this.router.navigate(['/mangas']);
-
         } else if (role === 'Viewer') {
-
           this.router.navigate(['/mangas']);
-
         } else {
-
           this.router.navigate(['/login']);
-
         }
-
       },
 
       error: (err: HttpErrorResponse) => {
@@ -79,23 +71,14 @@ export class LoginComponent {
         this.isLoading = false;
 
         if (err.status === 401) {
-
           this.serverError = 'Credenciales inválidas';
-
         } else if (err.status === 403) {
-
           this.serverError = 'Tu cuenta está desactivada';
-
         } else {
-
           this.serverError = 'Error en el servidor, intenta más tarde';
-
         }
-
+        this.cdr.detectChanges();
       }
-
     });
-
   }
-
 }

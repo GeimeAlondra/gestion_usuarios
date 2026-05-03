@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -19,13 +19,17 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef 
   ) {
     this.registerForm = this.fb.group({
       nombre: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
+    this.registerForm.get('email')!.valueChanges.subscribe(() => {
+    this.emailServerError = null;
+  });
   }
 
   get nombre() { return this.registerForm.get('nombre')!; }
@@ -53,6 +57,8 @@ export class RegisterComponent {
 
         if (err.status === 409) {
           this.emailServerError = err.error?.message ?? 'El email ya está registrado';
+          this.email.markAsTouched();
+          this.cdr.detectChanges();
         } else if (err.status === 400) {
           const errors: { field: string; message: string }[] = err.error?.errors ?? [];
           for (const e of errors) {
