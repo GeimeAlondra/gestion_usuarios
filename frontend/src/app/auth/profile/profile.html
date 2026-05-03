@@ -1,0 +1,114 @@
+<app-manga-navbar />
+
+<main class="profile-page">
+  <div class="profile-card">
+
+    @if (isLoading) {
+      <p class="loading-msg">Cargando perfil...</p>
+    }
+
+    @if (!isLoading && !isEditing && currentUser) {
+      <!-- VISTA CARD -->
+      <div class="card-header">
+        <div class="avatar-circle">{{ currentUser.name?.charAt(0) | uppercase }}</div>
+        <div>
+          <h2 class="card-name">{{ currentUser.name }}</h2>
+          <span class="badge badge--{{ currentUser.role | lowercase }}">{{ currentUser.role }}</span>
+        </div>
+      </div>
+
+      @if (successMsg) {
+        <div class="alert alert--success">{{ successMsg }}</div>
+      }
+
+      <div class="info-list">
+        <div class="info-item">
+          <span class="info-label">Correo</span>
+          <span class="info-value">{{ currentUser.email }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Rol</span>
+          <span class="info-value">{{ currentUser.role }}</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Estado</span>
+          <span class="info-value" [class.active]="currentUser.isActive">
+            {{ currentUser.isActive ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Miembro desde</span>
+          <span class="info-value">{{ currentUser.createdAt | date: 'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn btn--primary" (click)="startEditing()">
+          Editar perfil
+        </button>
+      </div>
+    }
+
+    @if (!isLoading && isEditing) {
+      <!-- VISTA FORMULARIO -->
+      <h2 class="form-title">Editar perfil</h2>
+
+      @if (serverError) {
+        <div class="alert alert--error">{{ serverError }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+        <div class="field">
+          <label class="label" for="name">Nombre</label>
+          <input id="name" type="text" class="input"
+            [class.input--error]="name.invalid && name.touched"
+            formControlName="name" placeholder="Tu nombre" />
+          @if (name.invalid && name.touched) {
+            <span class="error-msg">
+              @if (name.errors?.['required']) { El nombre es obligatorio. }
+              @else if (name.errors?.['minlength']) { Mínimo 2 caracteres. }
+            </span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="label" for="email">Correo electrónico</label>
+          <input id="email" type="email" class="input"
+            [class.input--error]="email.invalid && email.touched"
+            formControlName="email" placeholder="correo@ejemplo.com" />
+          @if (email.invalid && email.touched) {
+            <span class="error-msg">
+              @if (email.errors?.['required']) { El correo es obligatorio. }
+              @else if (email.errors?.['email']) { Ingresa un correo válido. }
+            </span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="label" for="password">
+            Nueva contraseña
+            <span class="label-hint">(dejar vacío para no cambiar)</span>
+          </label>
+          <input id="password" type="password" class="input"
+            [class.input--error]="password.invalid && password.touched"
+            formControlName="password" placeholder="Mínimo 6 caracteres" />
+          @if (password.invalid && password.touched) {
+            <span class="error-msg">Mínimo 6 caracteres.</span>
+          }
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn--secondary" (click)="cancelEditing()" [disabled]="isSaving">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn--primary" [disabled]="isSaving">
+            {{ isSaving ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+
+      </form>
+    }
+
+  </div>
+</main>
