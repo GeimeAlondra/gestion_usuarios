@@ -8,6 +8,7 @@ import { MangaListComponent } from './mangas/manga-list/manga-list';
 import { authGuard } from './core/guards/auth.guard';
 import { adminGuard, noAuthGuard } from './core/guards/auth.guard';
 import { MangaFormComponent } from './mangas/manga-form/manga-form';
+import { ProfileComponent } from './auth/profile/profile';
 import { MangaDetailComponent } from './mangas/manga-detail/manga-detail';
 
 export const routes: Routes = [
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'mangas/crear', component: MangaFormComponent, canActivate: [authGuard] },
   { path: 'mangas/editar/:id', component: MangaFormComponent, canActivate: [authGuard] },
   { path: 'mangas/:id', component: MangaDetailComponent, canActivate: [authGuard] },
+  { path: 'perfil', component: ProfileComponent, canActivate: [authGuard] },
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];

@@ -63,6 +63,14 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  getProfile(): Observable<any> {
+  return this.http.get(`${this.apiUrl}/profile`);
+  }
+  
+  updateProfile(data: { name?: string; email?: string; password?: string }): Observable<any> {
+    return this.http.put(`${this.apiUrl}/profile`, data);
+  }
+
   /*
   // tipado para evitar errores
   getUser(): LoginResponse['user'] | null {
