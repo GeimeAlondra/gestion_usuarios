@@ -13,7 +13,15 @@
 
     @if (isLoading) {
     <p class="list-loading">Cargando usuarios...</p>
+    <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-grow text-light" style="width: 3rem; height: 3rem;" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
     }
+
+
 
     @if (loadError) {
     <div class="list-error">{{ loadError }}</div>
