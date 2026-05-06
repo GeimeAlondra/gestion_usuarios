@@ -76,4 +76,14 @@ export class ActivityService {
     if (before) params = params.set('before', before);
     return this.http.delete<{ message: string }>(this.apiUrl, { params });
   }
+
+  getEditorLogs(filters: ActivityFilters = {}): Observable<ActivityResponse> {
+  let params = new HttpParams();
+  if (filters.action) params = params.set('action', filters.action);
+  if (filters.from) params = params.set('from', filters.from);
+  if (filters.to) params = params.set('to', filters.to);
+  if (filters.page) params = params.set('page', String(filters.page));
+  if (filters.limit) params = params.set('limit', String(filters.limit));
+  return this.http.get<ActivityResponse>(`${this.apiUrl}/editor`, { params });
+}
 }

@@ -3,13 +3,13 @@ const router  = express.Router();
 const { protect, authorize } = require('../middlewares/auth.middleware');
 const {
   getActivityLogs,
-  getMyActivity,
+  getEditorActivity,
   getActivitySummary,
   clearActivityLogs,
 } = require('../controllers/activity.controller');
 
-// Historial propio (cualquier usuario autenticado)
-router.get('/me', protect, getMyActivity);
+// Historial del edito
+router.get('/editor', protect, authorize('Editor'), getEditorActivity);
 
 // Resumen para el dashboard (solo Admin)
 router.get('/summary', protect, authorize('Admin'), getActivitySummary);
