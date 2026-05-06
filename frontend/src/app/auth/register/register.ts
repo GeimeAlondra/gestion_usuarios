@@ -24,7 +24,7 @@ export class RegisterComponent {
   ) {
     this.registerForm = this.fb.group({
       nombre: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/)]],
       password: ['', [Validators.required, Validators.minLength(8)]]
     });
     this.registerForm.get('email')!.valueChanges.subscribe(() => {

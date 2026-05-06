@@ -46,7 +46,7 @@
           @if (email.invalid && email.touched) {
             <span class="error-msg">
               @if (email.errors?.['required']) { El correo es obligatorio. }
-              @else if (email.errors?.['email']) { Ingresa un correo válido. }
+              @else if (email.errors?.['pattern']) { Ingresa un correo válido. }
             </span>
           }
         </div>

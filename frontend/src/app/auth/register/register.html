@@ -41,7 +41,7 @@
           <span class="error-msg">{{ emailServerError }}</span>
         } @else if (email.touched && email.errors?.['required']) {
           <span class="error-msg">El correo es requerido.</span>
-        } @else if (email.touched && email.errors?.['email']) {
+        } @else if (email.touched && email.errors?.['pattern']) {
           <span class="error-msg">Ingresa un correo válido.</span>
         }
       </div>
