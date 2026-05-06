@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
     default: true,
   },
   lastLogin: Date,
+  favorites: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Manga',
+  }],
 }, { timestamps: true });
 
 userSchema.pre('save', async function() {
