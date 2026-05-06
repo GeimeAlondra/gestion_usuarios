@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const upload   = require('../middlewares/upload.middleware');
 
 const {
   getMangas,
@@ -10,6 +11,18 @@ const {
 } = require('../controllers/manga.controller');
 
 const { protect, authorize } = require('../middlewares/auth.middleware');
+
+// Subir portada a Cloudinary
+router.post(
+  '/upload-cover',
+  protect,
+  authorize('Admin', 'Editor'),
+  upload.single('cover'),
+  (req, res) => {
+    if (!req.file) return res.status(400).json({ message: 'No se recibió ningún archivo' });
+    res.json({ url: req.file.path }); // Cloudinary devuelve la URL en req.file.path
+  }
+);
 
 /* ===============================
    Obtener todos los mangas

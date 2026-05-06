@@ -75,14 +75,61 @@
     </div>
 
     <div class="row g-0">
-      <label class="form-label">Imagen URL</label>
-      <input formControlName="coverUrl" placeholder="URL portada">
-      @if (coverUrl?.invalid && coverUrl?.touched) {
-      <small class="text-danger">
-        Ingrese un formato de url válida
-      </small>
-      }
+    <label class="form-label">Portada</label>
+
+    <div class="cover-tabs">
+      <button type="button" class="cover-tab"
+        [class.active]="coverMode === 'url'"
+        (click)="setCoverMode('url')">
+        <i class="bi bi-link-45deg"></i> URL
+      </button>
+      <button type="button" class="cover-tab"
+        [class.active]="coverMode === 'file'"
+        (click)="setCoverMode('file')">
+        <i class="bi bi-upload"></i> Subir imagen
+      </button>
     </div>
+
+    @if (coverMode === 'url') {
+      <input formControlName="coverUrl"
+        placeholder="https://ejemplo.com/portada.jpg"
+        (input)="onUrlInput($event)" />
+      @if (coverUrl?.invalid && coverUrl?.touched) {
+        <small class="text-danger">Ingrese una URL válida</small>
+      }
+    }
+
+    @if (coverMode === 'file') {
+      <label class="file-drop" [class.uploading]="isUploading">
+        <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+        @if (!previewUrl && !isUploading) {
+          <span class="file-drop-text">
+            <i class="bi bi-image fs-3 d-block mb-1"></i>
+            Haz clic para seleccionar una imagen
+            <small class="d-block mt-1">JPG, PNG, WEBP — máx. 5 MB</small>
+          </span>
+        }
+        @if (isUploading) {
+          <span class="file-drop-text">
+            <i class="bi bi-arrow-repeat spin fs-3 d-block mb-1"></i>
+            Subiendo a Cloudinary...
+          </span>
+        }
+      </label>
+      @if (uploadError) {
+        <small class="text-danger">{{ uploadError }}</small>
+      }
+    }
+
+    @if (previewUrl && !isUploading) {
+      <div class="cover-preview">
+        <img [src]="previewUrl" alt="Preview portada" />
+        <button type="button" class="btn-remove-cover" (click)="removeCover()">
+          <i class="bi bi-x-circle-fill"></i>
+        </button>
+      </div>
+    }
+</div>
 
     <div class="form-actions">
 
