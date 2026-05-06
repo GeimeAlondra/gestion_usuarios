@@ -26,7 +26,7 @@ export class CrearUsuarioComponent implements OnInit {
 
  form = this.fb.group({
    name: ['', [Validators.required, Validators.minLength(2)]],
-   email: ['', [Validators.required, Validators.email]],
+   email: ['', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/)]],
    password: ['', [Validators.required, Validators.minLength(6)]],
    role: ['Viewer' as 'Admin' | 'Editor' | 'Viewer', Validators.required],
    isActive: [true],

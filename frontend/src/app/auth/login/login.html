@@ -21,7 +21,7 @@
         @if (email.touched) {
           @if (email.errors?.['required']) {
             <span class="error-msg">El correo es requerido.</span>
-          } @else if (email.errors?.['email']) {
+          } @else if (email.errors?.['pattern']) {
             <span class="error-msg">Ingresa un correo válido.</span>
           }
         }
