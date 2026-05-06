@@ -1,5 +1,6 @@
 const Manga = require("../models/manga");
 const logActivity = require("../utils/activityLogger");
+const User = require('../models/user');
 
 const getMangas = async (req, res) => {
   try {
@@ -127,4 +128,49 @@ const deleteManga = async (req, res) => {
   }
 };
 
-module.exports = {getMangas, getMangaById, createManga, updateManga, deleteManga};
+const toggleFavorite = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    const manga = await Manga.findById(id);
+    if (!manga) return res.status(404).json({ message: 'Manga no encontrado' });
+
+    const user = await User.findById(userId);
+    const isFav = user.favorites.some(fId => fId.toString() === id);
+
+    if (isFav) {
+      user.favorites = user.favorites.filter(fId => fId.toString() !== id);
+    } else {
+      user.favorites.push(id);
+    }
+
+    await user.save();
+
+    await logActivity({
+      userId,
+      userRole: req.user.role,
+      action: isFav ? 'REMOVE_FAVORITE' : 'ADD_FAVORITE',
+      entity: 'manga',
+      entityId: String(manga._id),
+      entityName: manga.title,
+      details: isFav ? `Eliminó "${manga.title}" de favoritos` : `Agregó "${manga.title}" a favoritos`,
+      ip: req.ip,
+    });
+
+    res.json({ isFavorite: !isFav, favorites: user.favorites });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al actualizar favoritos' });
+  }
+};
+
+const getFavorites = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate('favorites');
+    res.json(user.favorites);
+  } catch (error) {
+    res.status(500).json({ message: 'Error al obtener favoritos' });
+  }
+};
+
+module.exports = { getMangas, getMangaById, createManga, updateManga, deleteManga, toggleFavorite, getFavorites };

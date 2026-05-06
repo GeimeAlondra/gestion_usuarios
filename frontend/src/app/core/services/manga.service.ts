@@ -48,4 +48,12 @@ export class MangaService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
+   getFavorites(): Observable<Manga[]> {
+    return this.http.get<Manga[]>(`${this.apiUrl}/me/favorites`);
+  }
+
+  toggleFavorite(mangaId: string): Observable<{ isFavorite: boolean; favorites: string[] }> {
+    return this.http.post<any>(`${this.apiUrl}/${mangaId}/favorite`, {});
+  }
+
 }

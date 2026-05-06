@@ -1,112 +1,93 @@
 <app-manga-navbar></app-manga-navbar>
 <div class="app">
 
-  <!-- HEADER TMO -->
-
   <div class="header-tmo">
-
-    <!-- BOTÓN CREAR -->
     <div class="admin-actions-bar">
+     
+      @if (userRole === 'Viewer') {
+      <button class="btn-favorites" [class.btn-favorites--active]="showOnlyFavorites"
+        (click)="showOnlyFavorites = !showOnlyFavorites">
+        <i class="bi" [ngClass]="showOnlyFavorites ? 'bi-star-fill' : 'bi-star'"></i>
+        {{ showOnlyFavorites ? 'Todos los mangas' : 'Mis favoritos' }}
+      </button>
+    }
+
       <button *ngIf="canEdit()" routerLink="/mangas/crear" class="btn-create">
         <i class="bi bi-plus-circle"></i>
         Nuevo Manga
       </button>
     </div>
-
   </div>
 
-  <!-- GRID -->
+  <!-- Mensaje cuando no hay favoritos -->
+  @if (showOnlyFavorites && displayedMangas.length === 0) {
+    <div class="empty-favorites">
+      <i class="bi bi-star" style="font-size:2.5rem; color:#facc15"></i>
+      <p>Aún no tienes mangas favoritos.<br>Presiona <i class="bi bi-star"></i> en cualquier manga para agregarlo.</p>
+    </div>
+  }
 
   <div class="library-grid">
+    <div class="media-card" *ngFor="let manga of displayedMangas">
 
-    <div class="media-card" *ngFor="let manga of mangas">
-
-      <!-- COVER -->
       <div class="media-preview">
         <img [src]="manga.coverUrl || 'https://placehold.co/400x240'">
         <span class="status-badge" [ngClass]="getStatusClass(manga.status)">
           {{ manga.status }}
         </span>
+        @if (userRole === 'Viewer') {
+        <!-- Botón favorito sobre la portada -->
+        <button class="btn-fav-overlay" [class.btn-fav-overlay--active]="isFavorite(manga)"
+          (click)="toggleFavorite(manga, $event)" title="Favorito">
+          <i class="bi" [ngClass]="isFavorite(manga) ? 'bi-star-fill' : 'bi-star'"></i>
+        </button>
+      }
       </div>
-
-      <!-- INFO -->
+  
       <div class="media-info">
-
         <div class="media-title">
-
-          <span>
-            {{ manga.title }}
-          </span>
-
-          <span class="media-type">
-            {{ manga.genre }}
-          </span>
+          <span>{{ manga.title }}</span>
+          <span class="media-type">{{ manga.genre }}</span>
         </div>
 
         <div class="meta-row">
-          <span>
-            <i class="bi bi-calendar3"></i>
-            {{ manga.year }}
-          </span>
-
-          <span class="chapters-info">
-            <i class="bi bi-journal-bookmark"></i>
-            {{ manga.chapters }} caps
-          </span>
+          <span><i class="bi bi-calendar3"></i> {{ manga.year }}</span>
+          <span class="chapters-info"><i class="bi bi-journal-bookmark"></i> {{ manga.chapters }} caps</span>
         </div>
 
         <div class="meta-row">
-          <span>
-            <i class="bi bi-person-lines-fill"></i>
-            {{ manga.author }}
-          </span>
+          <span><i class="bi bi-person-lines-fill"></i> {{ manga.author }}</span>
         </div>
 
-        <!-- ACTIONS -->
         <div class="card-admin-icons" *ngIf="canEdit()">
           <button routerLink="/mangas/editar/{{manga._id}}" class="icon-edit">
-            <i class="bi bi-pencil-square"></i>
-            Editar
+            <i class="bi bi-pencil-square"></i> Editar
           </button>
-
           <button *ngIf="isAdmin()" (click)="deleteManga(manga)" class="icon-del">
-            <i class="bi bi-trash"></i>
-            Eliminar
+            <i class="bi bi-trash"></i> Eliminar
           </button>
         </div>
 
-        <!-- VER -->
-        <button routerLink="/mangas/{{manga._id}}" class="btn-view">
-          Ver detalles
-        </button>
-
+        <button routerLink="/mangas/{{manga._id}}" class="btn-view">Ver detalles</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- MODAL DELETE -->
 @if (mangaToDelete) {
 <div class="manga-modal-overlay" (click)="cancelDelete()">
   <div class="manga-modal-delete" (click)="$event.stopPropagation()">
     <h3 class="manga-modal-title border-bottom pb-2">Eliminar Manga</h3>
     <p class="manga-modal-body">
-      ¿Seguro que deseas eliminar el manga
-      <strong>{{ mangaToDelete.title }}</strong>?
-      Esta accion no se puede deshacer.
+      ¿Seguro que deseas eliminar el manga <strong>{{ mangaToDelete.title }}</strong>?
+      Esta acción no se puede deshacer.
     </p>
-
     <div class="manga-modal-actions border-top pt-3 mt-2">
-
-      <button type="button" class="btn-cancel" (click)="cancelDelete()">
-        Cancelar
-      </button>
-
+      <button type="button" class="btn-cancel" (click)="cancelDelete()">Cancelar</button>
       <button type="button" class="btn-confirm-delete" (click)="confirmDelete()">
         <i class="bi bi-exclamation-triangle-fill"></i>
         {{ isDeleting ? 'Eliminando...' : 'Eliminar' }}
       </button>
-
     </div>
   </div>
 </div>
