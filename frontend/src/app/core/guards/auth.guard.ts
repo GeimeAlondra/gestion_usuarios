@@ -5,11 +5,7 @@ import { AuthService } from '../services/auth.service';
 export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-
-  if (auth.isAuthenticated()) {
-    return true;
-  }
-
+  if (auth.isAuthenticated()) return true;
   router.navigate(['/login']);
   return false;
 };
@@ -17,32 +13,41 @@ export const authGuard: CanActivateFn = () => {
 export const noAuthGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-
   if (auth.isAuthenticated()) {
     router.navigate(['/dashboard']);
     return false;
   }
-
   return true;
 };
 
 export const adminGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-
   if (!auth.isAuthenticated()) {
     router.navigate(['/login']);
     return false;
   }
-
   const user = auth.getUser();
   if (user?.role !== 'Admin') {
-    // Limpiar sesión para evitar bucle de redirección con noAuthGuard
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     router.navigate(['/login']);
     return false;
   }
+  return true;
+};
 
+export const editorGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  if (!auth.isAuthenticated()) {
+    router.navigate(['/login']);
+    return false;
+  }
+  const user = auth.getUser();
+  if (user?.role !== 'Editor') {
+    router.navigate(['/login']);
+    return false;
+  }
   return true;
 };

@@ -8,6 +8,8 @@ const LABELS = {
   CREATE_USER: "Creó un usuario",
   UPDATE_USER: "Editó un usuario",
   DELETE_USER: "Eliminó un usuario",
+  ADD_FAVORITE: "Agregó un manga a favoritos",
+  REMOVE_FAVORITE: "Quitó un manga de favoritos",
   LOGIN: "Inició sesión",
   LOGOUT: "Cerró sesión",
   UPDATE_PROFILE: "Actualizó su perfil",
@@ -71,22 +73,61 @@ const getActivityLogs = async (req, res) => {
   }
 };
 
-// Historial del usuario autenticado
-const getMyActivity = async (req, res) => {
+const getEditorActivity = async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
+    const { action, from, to, page = 1, limit = 10 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    const filter = { user: req.user.id };
+    let filter = {
+      $or: [
+        { user: req.user.id },
+        {
+          userRole: "Editor",
+          action: { $in: ["CREATE_MANGA", "UPDATE_MANGA"] },
+        },
+      ],
+    };
+
+    if (action) {
+      const allowedActions = [
+        "CREATE_MANGA",
+        "UPDATE_MANGA",
+        "VIEW_MANGA",
+        "LOGIN",
+        "LOGOUT",
+        "UPDATE_PROFILE",
+      ];
+
+      if (allowedActions.includes(action)) {
+        if (["CREATE_MANGA", "UPDATE_MANGA"].includes(action)) {
+          filter.$or[0].action = action;
+          filter.$or[1].action = action;
+        } else {
+          filter.$or = [{ user: req.user.id, action }];
+        }
+      }
+    }
+
+    if (from || to) {
+      const dateFilter = {};
+      if (from) dateFilter.$gte = new Date(from);
+      if (to)
+        dateFilter.$lte = new Date(new Date(to).setHours(23, 59, 59, 999));
+      filter.$or.forEach((clause) => (clause.createdAt = dateFilter));
+    }
+
     const total = await ActivityLog.countDocuments(filter);
 
     const logs = await ActivityLog.find(filter)
+      .populate("user", "name email role")
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(parseInt(limit));
 
     const formatted = logs.map((log) => ({
       _id: log._id,
+      user: log.user,
+      userRole: log.userRole,
       action: log.action,
       actionLabel: LABELS[log.action] ?? log.action,
       entity: log.entity,
@@ -104,8 +145,10 @@ const getMyActivity = async (req, res) => {
       logs: formatted,
     });
   } catch (error) {
-    console.error("[getMyActivity]", error);
-    res.status(500).json({ message: "Error al obtener tu historial" });
+    console.error("[getEditorActivity]", error);
+    res
+      .status(500)
+      .json({ message: "Error al obtener el historial del editor" });
   }
 };
 
@@ -147,7 +190,7 @@ const getActivitySummary = async (req, res) => {
 // Limpiar historial
 const clearActivityLogs = async (req, res) => {
   try {
-    const { before } = req.query; // borrar registros anteriores a una fecha
+    const { before } = req.query;
     const filter = {};
     if (before) filter.createdAt = { $lt: new Date(before) };
 
@@ -163,7 +206,7 @@ const clearActivityLogs = async (req, res) => {
 
 module.exports = {
   getActivityLogs,
-  getMyActivity,
+  getEditorActivity,
   getActivitySummary,
   clearActivityLogs,
 };

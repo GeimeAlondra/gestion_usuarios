@@ -6,11 +6,12 @@ import { UsuariosComponent } from './usuarios/usuarios';
 import { CrearUsuarioComponent } from './usuarios/crear-usuario/crear-usuario';
 import { MangaListComponent } from './mangas/manga-list/manga-list';
 import { authGuard } from './core/guards/auth.guard';
-import { adminGuard, noAuthGuard } from './core/guards/auth.guard';
+import { adminGuard, editorGuard, noAuthGuard } from './core/guards/auth.guard'; 
 import { MangaFormComponent } from './mangas/manga-form/manga-form';
 import { ProfileComponent } from './auth/profile/profile';
 import { MangaDetailComponent } from './mangas/manga-detail/manga-detail';
 import { ActivityComponent } from './activity/activity';
+import { EditorActivityComponent } from './editor-activity/editor-activity';
 
 export const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [noAuthGuard] },
@@ -25,6 +26,7 @@ export const routes: Routes = [
   { path: 'mangas/:id', component: MangaDetailComponent, canActivate: [authGuard] },
   { path: 'perfil', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'actividad', component: ActivityComponent, canActivate: [adminGuard] },
+  { path: 'editor/actividad', component: EditorActivityComponent, canActivate: [editorGuard] }, // ← NUEVO
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 ];
