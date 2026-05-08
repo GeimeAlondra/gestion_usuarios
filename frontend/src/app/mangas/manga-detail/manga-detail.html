@@ -1,121 +1,87 @@
 <app-manga-navbar></app-manga-navbar>
 
 <div *ngIf="manga; else loading">
-
     <div class="container">
-
         <div class="detail-card">
-
             <!-- IMAGEN -->
 
             <div class="cover-wrapper">
-
                 <img [src]="manga.coverUrl || 'https://placehold.co/400x240'" class="cover">
 
                 <span class="status-badge" [ngClass]="getStatusClass(manga.status)">
-
                     {{ manga.status }}
-
                 </span>
-
             </div>
 
             <!-- INFO -->
 
             <div class="info">
-
                 <h1 class="title">
-
                     {{ manga.title }}
-
                 </h1>
 
                 <div class="meta-grid">
-
                     <div class="meta-item">
-
-                        <span class="label">Género</span>
-
-                        <span class="value">
-
-                            {{ manga.genre }}
-
+                        <label for="media-type" class="label">Género principal</label>
+                        <br>
+                        <span class="media-type">
+                            {{ manga.mainGenre?.name }}
                         </span>
-
                     </div>
 
                     <div class="meta-item">
+                        <span class="label">Géneros</span>
+                        <br>
+                        <div class="genres">
+                            @for (g of manga.genres; track g._id) {
+                                @if (g._id !== manga.mainGenre?._id) {
+                                    <span class="genre-badge">{{ g.name }}</span>
+                                }
+                            }
+                        </div>
+                    </div>
 
+                    <div class="meta-item">
                         <span class="label">Año</span>
 
                         <span class="value">
-
                             {{ manga.year }}
-
                         </span>
-
                     </div>
 
                     <div class="meta-item">
-
                         <span class="label">Capítulos</span>
 
                         <span class="value chapters">
-
                             {{ manga.chapters }}
-
                         </span>
-
                     </div>
 
                     <div class="meta-item">
-
                         <span class="label">Autor</span>
 
                         <span class="value">
-
                             {{ manga.author }}
-
                         </span>
-
                     </div>
-
                 </div>
 
                 <!-- SINOPSIS -->
 
                 <div class="synopsis">
-
                     <h3>Sinopsis</h3>
 
                     <p>
-
                         {{ manga.synopsis || 'Sin sinopsis disponible.' }}
-
                     </p>
-
                 </div>
 
-                <button routerLink="/mangas" class="btn-back">
-
-                    Volver a biblioteca
-
-                </button>
-
+                <button routerLink="/mangas" class="btn-back">Volver a biblioteca</button>
             </div>
-
         </div>
-
     </div>
-
 </div>
 
 <ng-template #loading>
-
-    <div class="loading">
-
-        Cargando manga...
-
-    </div>
-
+    <div class="loading">Cargando manga...</div>
 </ng-template>

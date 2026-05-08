@@ -6,7 +6,8 @@ export interface Manga {
   _id?: string;
   title: string;
   status: 'emision' | 'finalizado' | 'proximamente';
-  genre: string;
+  genres: any[];
+  mainGenre: any;
   year: number;
   chapters: number;
   author: string;
