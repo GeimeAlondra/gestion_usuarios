@@ -29,9 +29,7 @@ body {
   font-size: 1.7rem;
   font-weight: 800;
   letter-spacing: 1px;
-  background: linear-gradient(135deg,
-      #facc15,
-      #ff8c42);
+  background: linear-gradient(135deg, #facc15, #ff8c42);
   -webkit-background-clip: text;
   color: transparent;
 }
@@ -66,26 +64,29 @@ body {
 
 .library-grid {
   display: grid;
-  grid-template-columns:
-    repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.8rem;
 }
 
-/* CARD */
+/* #region CARD */
 .media-card {
-  background: #10141e;
-  border-radius: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #131a26 0%, #0f172a 100%);
+  border-radius: 18px;
   overflow: hidden;
-  border: 1px solid #202632;
-  transition: 0.2s;
+  border: 1px solid #1f2937;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+
+  transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
 }
 
 .media-card:hover {
-  transform: translateY(-4px);
-  border-color: #facc1530;
+  transform: translateY(-16px);
+  border-color: rgba(250,204,21,0.4);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.5);
 }
 
-/* PREVIEW */
 .media-preview {
   position: relative;
   aspect-ratio: 16/9;
@@ -98,7 +99,6 @@ body {
   object-fit: cover;
 }
 
-/* STATUS */
 .status-badge {
   position: absolute;
   top: 10px;
@@ -123,10 +123,22 @@ body {
   color: black;
 }
 
-/* INFO */
-
 .media-info {
+  display: flex;
   padding: 1rem;
+  flex-direction: column;
+  flex: 1;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 10px;
+}
+
+.card-accions {
+  margin-top: auto;
 }
 
 .media-title {
@@ -138,15 +150,37 @@ body {
 }
 
 .media-type {
-  font-size: 0.7rem;
-  background: #2a3a52;
+  font-size: 0.8rem;
+  background: #facc15;
   padding: 2px 10px;
   border-radius: 20px;
-  color: #facc15;
+  color: black;
   align-self: flex-start;
 }
 
-/* META */
+.genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.genre-badge {
+  background: #1e293b;
+  color: #cbd5e1;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border: 1px solid #334155;
+  transition: 0.2s;
+}
+
+.genre-badge:hover {
+  background: #334155;
+  color: #facc15;
+  border-color: #facc15;
+}
 
 .meta-row {
   display: flex;
@@ -237,9 +271,7 @@ body {
 }
 
 .manga-modal-delete {
-  background: linear-gradient(180deg,
-      #1e293b,
-      #0f172a);
+  background: linear-gradient(180deg, #1e293b, #0f172a);
   padding: 2rem;
   border-radius: 16px;
   width: calc(100% - 2rem);
@@ -263,7 +295,6 @@ body {
   text-align: justify;
   color: #cbd5e1;
 }
-
 
 .manga-modal-actions {
   display: flex;
@@ -354,7 +385,10 @@ body {
   cursor: pointer;
   font-size: 1.1rem;
   color: #fff;
-  transition: background 0.2s, color 0.2s, transform 0.15s;
+  transition:
+    background 0.2s,
+    color 0.2s,
+    transform 0.15s;
 }
 
 .btn-fav-overlay:hover {
@@ -382,7 +416,9 @@ body {
   align-items: center;
   gap: 6px;
   margin-right: 10px;
-  transition: border-color 0.2s, color 0.2s;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
 }
 
 .btn-favorites:hover {

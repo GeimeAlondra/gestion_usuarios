@@ -1,12 +1,13 @@
 <app-manga-navbar></app-manga-navbar>
 <div class="app">
-
   <div class="header-tmo">
     <div class="admin-actions-bar">
-     
       @if (userRole === 'Viewer') {
-      <button class="btn-favorites" [class.btn-favorites--active]="showOnlyFavorites"
-        (click)="showOnlyFavorites = !showOnlyFavorites">
+      <button 
+        class="btn-favorites" 
+        [class.btn-favorites--active]="showOnlyFavorites"
+        (click)="showOnlyFavorites = !showOnlyFavorites"
+        >
         <i class="bi" [ngClass]="showOnlyFavorites ? 'bi-star-fill' : 'bi-star'"></i>
         {{ showOnlyFavorites ? 'Todos los mangas' : 'Mis favoritos' }}
       </button>
@@ -23,52 +24,72 @@
   @if (showOnlyFavorites && displayedMangas.length === 0) {
     <div class="empty-favorites">
       <i class="bi bi-star" style="font-size:2.5rem; color:#facc15"></i>
-      <p>Aún no tienes mangas favoritos.<br>Presiona <i class="bi bi-star"></i> en cualquier manga para agregarlo.</p>
+      <p>
+        Aún no tienes mangas favoritos.<br />Presiona <i class="bi bi-star"></i> en cualquier manga
+        para agregarlo.
+      </p>
     </div>
   }
 
   <div class="library-grid">
     <div class="media-card" *ngFor="let manga of displayedMangas">
-
       <div class="media-preview">
         <img [src]="manga.coverUrl || 'https://placehold.co/400x240'">
         <span class="status-badge" [ngClass]="getStatusClass(manga.status)">
           {{ manga.status }}
         </span>
         @if (userRole === 'Viewer') {
-        <!-- Botón favorito sobre la portada -->
-        <button class="btn-fav-overlay" [class.btn-fav-overlay--active]="isFavorite(manga)"
-          (click)="toggleFavorite(manga, $event)" title="Favorito">
-          <i class="bi" [ngClass]="isFavorite(manga) ? 'bi-star-fill' : 'bi-star'"></i>
+          <!-- Botón favorito sobre la portada -->
+          <button
+              class="btn-fav-overlay"
+              [class.btn-fav-overlay--active]="isFavorite(manga)"
+              (click)="toggleFavorite(manga, $event)"
+              title="Favorito"
+            >
+            <i class="bi" [ngClass]="isFavorite(manga) ? 'bi-star-fill' : 'bi-star'"></i>
         </button>
       }
       </div>
   
       <div class="media-info">
-        <div class="media-title">
-          <span>{{ manga.title }}</span>
-          <span class="media-type">{{ manga.genre }}</span>
+        <div class="card-details">
+          <div class="media-title">
+            <span>{{ manga.title }}</span>
+            <span class="media-type">{{ manga.mainGenre?.name }}</span>
+          </div>
+
+          <div class="genres">
+            @for (g of manga.genres.slice(0, 10); track g._id) {
+              @if (g._id !== manga.mainGenre?._id) {
+                <span class="genre-badge">{{ g.name }}</span>
+              }
+            }
+          </div>
         </div>
 
-        <div class="meta-row">
-          <span><i class="bi bi-calendar3"></i> {{ manga.year }}</span>
-          <span class="chapters-info"><i class="bi bi-journal-bookmark"></i> {{ manga.chapters }} caps</span>
-        </div>
+        <div class="card-accions">
+          <div class="meta-row">
+            <span><i class="bi bi-calendar3"></i> {{ manga.year }}</span>
+            <span class="chapters-info"
+              ><i class="bi bi-journal-bookmark"></i> {{ manga.chapters }} caps</span
+            >
+          </div>
 
-        <div class="meta-row">
-          <span><i class="bi bi-person-lines-fill"></i> {{ manga.author }}</span>
-        </div>
+          <div class="meta-row">
+            <span><i class="bi bi-person-lines-fill"></i> {{ manga.author }}</span>
+          </div>
 
-        <div class="card-admin-icons" *ngIf="canEdit()">
-          <button routerLink="/mangas/editar/{{manga._id}}" class="icon-edit">
-            <i class="bi bi-pencil-square"></i> Editar
-          </button>
-          <button *ngIf="isAdmin()" (click)="deleteManga(manga)" class="icon-del">
-            <i class="bi bi-trash"></i> Eliminar
-          </button>
-        </div>
+          <div class="card-admin-icons" *ngIf="canEdit()">
+            <button routerLink="/mangas/editar/{{ manga._id }}" class="icon-edit">
+              <i class="bi bi-pencil-square"></i> Editar
+            </button>
+            <button *ngIf="isAdmin()" (click)="deleteManga(manga)" class="icon-del">
+              <i class="bi bi-trash"></i> Eliminar
+            </button>
+          </div>
 
-        <button routerLink="/mangas/{{manga._id}}" class="btn-view">Ver detalles</button>
+          <button routerLink="/mangas/{{ manga._id }}" class="btn-view">Ver detalles</button>
+        </div>
       </div>
     </div>
   </div>

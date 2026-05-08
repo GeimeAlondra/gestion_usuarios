@@ -1,66 +1,83 @@
 <app-manga-navbar></app-manga-navbar>
 
 <div class="container">
-
   <h2>
     {{ isEditMode ? 'Editar Manga' : 'Añadir Manga' }}
   </h2>
 
   <form [formGroup]="form" (ngSubmit)="save()">
-
     <div class="row g-0">
       <label class="form-label">Título</label>
-      <input formControlName="title" placeholder="Título">
+      <input formControlName="title" placeholder="Título" />
       @if (title?.invalid && title?.touched) {
-      <small class="text-danger">
-        Este campo no puede quedar vacío
-      </small>
+      <small class="text-danger"> Este campo no puede quedar vacío </small>
       }
     </div>
 
     <div class="row g-0">
       <label class="form-label">Estado</label>
       <select formControlName="status">
-
         <option value="emision">En emisión</option>
         <option value="finalizado">Finalizado</option>
         <option value="proximamente">Próximamente</option>
-
       </select>
     </div>
 
     <div class="row g-0">
-      <label class="form-label">Genero</label>
-      <input formControlName="genre" placeholder="Género">
-      @if (genre?.invalid && genre?.touched) {
-      <small class="text-danger">
-        Este campo no puede quedar vacío
-      </small>
-      }
+      <label class="form-label">Géneros</label>
+
+      <!-- Contenedor con scroll si hay muchos géneros -->
+      <div class="genres-container p-2 border rounded" >
+        @for (g of genresList; track g._id) {
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" [id]="g._id" [checked]="form.value.genres?.includes(g._id)" (change)="toggleGenre(g._id, $event)"/>
+            <label class="form-check-label" [for]="g._id">
+              {{ g.name }}
+            </label>
+          </div>
+        }
+      </div>
+
+      <div class="add-genre">
+        <input
+          [(ngModel)]="newGenre"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="Nuevo género"
+        />
+        <button type="button" class="btn btn-primary" (click)="addGenre()">Añadir</button>
+      </div>
+    </div>
+
+    <div class="row g-0">
+      <label class="form-label">Género principal</label>
+
+      <select formControlName="mainGenre" class="form-select">
+        @for (g of genresList; track g._id) {
+          @if (form.value.genres?.includes(g._id)) {
+            <option [ngValue]="g._id">{{ g.name }}</option>
+          }
+        }
+      </select>
     </div>
 
     <div class="row g-0">
       <label class="form-label">Año publicado</label>
-      <input type="number" formControlName="year" placeholder="Año">
+      <input type="number" formControlName="year" placeholder="Año" />
       @if (year?.invalid && year?.touched) {
-      <small class="text-danger">
-        Coloque un año valido, entre 1900 y el año actual
-      </small>
+        <small class="text-danger"> Coloque un año valido, entre 1900 y el año actual </small>
       }
     </div>
 
     <div class="row g-0">
       <label class="form-label">Capitulos</label>
-      <input type="number" formControlName="chapters" placeholder="Capítulos">
+      <input type="number" formControlName="chapters" placeholder="Capítulos" />
     </div>
 
     <div class="row g-0">
       <label class="form-label">Autor</label>
-      <input formControlName="author" placeholder="Autor">
+      <input formControlName="author" placeholder="Autor" />
       @if (author?.invalid && author?.touched) {
-      <small class="text-danger">
-        Coloque un nombre de autor válido o coloque "Anonimo".
-      </small>
+        <small class="text-danger"> Coloque un nombre de autor válido o coloque "Anonimo". </small>
       }
     </div>
 
@@ -68,81 +85,83 @@
       <label class="form-label">Sinopsis</label>
       <textarea formControlName="synopsis" placeholder="Sinopsis"></textarea>
       @if (synopsis?.invalid && synopsis?.touched) {
-      <small class="text-danger">
-        Capacidad máxima de texto superada, maximo 2000 carateres
-      </small>
+        <small class="text-danger">
+          Capacidad máxima de texto superada, maximo 2000 carateres
+        </small>
       }
     </div>
 
     <div class="row g-0">
-    <label class="form-label">Portada</label>
+      <label class="form-label">Portada</label>
 
-    <div class="cover-tabs">
-      <button type="button" class="cover-tab"
-        [class.active]="coverMode === 'url'"
-        (click)="setCoverMode('url')">
-        <i class="bi bi-link-45deg"></i> URL
-      </button>
-      <button type="button" class="cover-tab"
-        [class.active]="coverMode === 'file'"
-        (click)="setCoverMode('file')">
-        <i class="bi bi-upload"></i> Subir imagen
-      </button>
-    </div>
-
-    @if (coverMode === 'url') {
-      <input formControlName="coverUrl"
-        placeholder="https://ejemplo.com/portada.jpg"
-        (input)="onUrlInput($event)" />
-      @if (coverUrl?.invalid && coverUrl?.touched) {
-        <small class="text-danger">Ingrese una URL válida</small>
-      }
-    }
-
-    @if (coverMode === 'file') {
-      <label class="file-drop" [class.uploading]="isUploading">
-        <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
-        @if (!previewUrl && !isUploading) {
-          <span class="file-drop-text">
-            <i class="bi bi-image fs-3 d-block mb-1"></i>
-            Haz clic para seleccionar una imagen
-            <small class="d-block mt-1">JPG, PNG, WEBP — máx. 5 MB</small>
-          </span>
-        }
-        @if (isUploading) {
-          <span class="file-drop-text">
-            <i class="bi bi-arrow-repeat spin fs-3 d-block mb-1"></i>
-            Subiendo a Cloudinary...
-          </span>
-        }
-      </label>
-      @if (uploadError) {
-        <small class="text-danger">{{ uploadError }}</small>
-      }
-    }
-
-    @if (previewUrl && !isUploading) {
-      <div class="cover-preview">
-        <img [src]="previewUrl" alt="Preview portada" />
-        <button type="button" class="btn-remove-cover" (click)="removeCover()">
-          <i class="bi bi-x-circle-fill"></i>
+      <div class="cover-tabs">
+        <button
+          type="button"
+          class="cover-tab"
+          [class.active]="coverMode === 'url'"
+          (click)="setCoverMode('url')"
+          >
+          <i class="bi bi-link-45deg"></i> URL
+        </button>
+        <button
+          type="button"
+          class="cover-tab"
+          [class.active]="coverMode === 'file'"
+          (click)="setCoverMode('file')"
+          >
+          <i class="bi bi-upload"></i> Subir imagen
         </button>
       </div>
-    }
-</div>
+
+      @if (coverMode === 'url') {
+        <input
+            formControlName="coverUrl"
+            placeholder="https://ejemplo.com/portada.jpg"
+            (input)="onUrlInput($event)"
+            />
+        @if (coverUrl?.invalid && coverUrl?.touched) {
+          <small class="text-danger">Ingrese una URL válida</small>
+        }
+      }
+
+      @if (coverMode === 'file') {
+        <label class="file-drop" [class.uploading]="isUploading">
+          <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+          @if (!previewUrl && !isUploading) {
+            <span class="file-drop-text">
+              <i class="bi bi-image fs-3 d-block mb-1"></i>
+              Haz clic para seleccionar una imagen
+              <small class="d-block mt-1">JPG, PNG, WEBP — máx. 5 MB</small>
+            </span>
+          }
+          @if (isUploading) {
+            <span class="file-drop-text">
+              <i class="bi bi-arrow-repeat spin fs-3 d-block mb-1"></i>
+              Subiendo a Cloudinary...
+            </span>
+          }
+        </label>
+        @if (uploadError) {
+          <small class="text-danger">{{ uploadError }}</small>
+        }
+      }
+
+      @if (previewUrl && !isUploading) {
+        <div class="cover-preview">
+          <img [src]="previewUrl" alt="Preview portada" />
+          <button type="button" class="btn-remove-cover" (click)="removeCover()">
+            <i class="bi bi-x-circle-fill"></i>
+          </button>
+        </div>
+      }
+    </div>
 
     <div class="form-actions">
-
-      <button type="button" class="btn-cancel" routerLink="/mangas">
-        Cancelar
-      </button>
+      <button type="button" class="btn-cancel" routerLink="/mangas">Cancelar</button>
 
       <button type="submit" class="btn-submit">
         {{ isEditMode ? 'Editar Manga' : 'Guardar Manga' }}
       </button>
-
     </div>
-
   </form>
-
 </div>

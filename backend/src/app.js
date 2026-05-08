@@ -22,5 +22,6 @@ app.use("/api/stats", statsRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/mangas", mangaRoutes);
 app.use("/api/activity", activityRoutes);
+app.use("/api/genres", require("./routes/genre.routes"));
 
 module.exports = app;
