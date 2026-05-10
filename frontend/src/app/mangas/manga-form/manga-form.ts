@@ -27,7 +27,7 @@ export class MangaFormComponent implements OnInit {
   isUploading = false;
   uploadError = '';
 
-  private readonly apiBase = 'http://localhost:3000/api';
+  private readonly apiBase = 'https://gestion-backend-8p1l.onrender.com/api';
 
   constructor(
     private fb: FormBuilder,

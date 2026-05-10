@@ -36,7 +36,7 @@ export interface LoginResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
+  private apiUrl = 'https://gestion-backend-8p1l.onrender.com/api/auth';
 
   constructor(private http: HttpClient, private router: Router) {}
 
