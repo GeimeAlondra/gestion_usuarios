@@ -28,7 +28,7 @@ export interface UpdateUserDto {
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
-  private apiUrl = 'http://localhost:3000/api/users';
+  private apiUrl = 'https://gestion-usuarios-0st5.onrender.com/api/users';
 
   constructor(private http: HttpClient) {}
 

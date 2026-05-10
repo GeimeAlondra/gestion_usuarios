@@ -15,7 +15,7 @@ export interface Stats {
 
 @Injectable({ providedIn: 'root' })
 export class StatsService {
-  private apiUrl = 'http://localhost:3000/api/stats';
+  private apiUrl = 'https://gestion-usuarios-0st5.onrender.com/api/stats';
 
   constructor(private http: HttpClient) {}
 

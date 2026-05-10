@@ -20,7 +20,7 @@ export interface Manga {
 })
 export class MangaService {
 
-  private apiUrl = 'http://localhost:3000/api/mangas';
+  private apiUrl = 'https://gestion-usuarios-0st5.onrender.com/api/mangas';
 
   constructor(private http: HttpClient) {}
 
