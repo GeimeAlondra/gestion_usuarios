@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { MangaNavbarComponent } from "./core/components/manga-navbar/manga-navbar";
+import { MangaNavbarComponent } from "./core/layouts/manga-navbar/manga-navbar";
 
 @Component({
   selector: 'app-root',
