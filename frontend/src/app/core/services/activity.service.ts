@@ -46,7 +46,7 @@ export interface ActivitySummary {
 
 @Injectable({ providedIn: 'root' })
 export class ActivityService {
-  private apiUrl = 'http://localhost:3000/api/activity';
+  private apiUrl = 'https://gestion-backend-8p1l.onrender.com/api/activity';
 
   constructor(private http: HttpClient) {}
 
