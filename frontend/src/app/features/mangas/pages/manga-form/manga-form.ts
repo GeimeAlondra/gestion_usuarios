@@ -211,16 +211,17 @@ export class MangaFormComponent implements OnInit {
       mainGenre: this.form.value.mainGenre,
     };
 
-    this.mangaService.createManga(data).subscribe({
+    const request$ = this.isEditMode && this.mangaId
+      ? this.mangaService.updateManga(this.mangaId, data)
+      : this.mangaService.createManga(data);
+    
+    request$.subscribe({
       next: () => {
         this.isSaving = false;
-
         this.router.navigate(['/mangas']);
       },
-
       error: (err) => {
         this.isSaving = false;
-
         this.openGenreModal('error', 'Error', err.error?.message || 'No se pudo guardar el manga.');
       },
     });
