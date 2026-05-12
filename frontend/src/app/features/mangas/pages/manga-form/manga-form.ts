@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
@@ -15,18 +15,34 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./manga-form.css'],
 })
 export class MangaFormComponent implements OnInit {
+  @ViewChild('genresPanel') genresPanel!: ElementRef;
+
   form!: FormGroup;
   isEditMode = false;
   isAddingGenre = false;
   mangaId: string | null = null;
 
   genresList: any[] = [];
+  genreSearch = '';
+  adminGenreSearch = '';
+  showGenresPanel = false;
+  editingGenreId: string | null = null;
+  editingGenreName = '';
 
   coverMode: 'url' | 'file' = 'url';
   previewUrl = '';
   isUploading = false;
   uploadError = '';
 
+  showGenreModal = false;
+  genreModalMode: 'delete' | 'error' | 'success' = 'delete';
+  genreModalTitle = '';
+  genreModalMessage = '';
+  genreToDeleteId: string | null = null;
+  isDeletingGenre = false;
+
+  /* Para probar en develop fuera de render */
+  /* private readonly apiBase = 'http://localhost:3000/api'; */
   private readonly apiBase = 'https://gestion-backend-8p1l.onrender.com/api';
 
   constructor(
@@ -35,6 +51,7 @@ export class MangaFormComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private http: HttpClient,
+    private cd: ChangeDetectorRef,
   ) {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
@@ -63,6 +80,8 @@ export class MangaFormComponent implements OnInit {
   ngOnInit(): void {
     this.http.get<any[]>(`${this.apiBase}/genres`).subscribe((res) => {
       this.genresList = res || [];
+
+      this.cd.markForCheck();
     });
 
     this.mangaId = this.route.snapshot.paramMap.get('id');
@@ -73,7 +92,7 @@ export class MangaFormComponent implements OnInit {
       this.mangaService.getManga(this.mangaId).subscribe((manga) => {
         this.form.patchValue({
           ...manga,
-          genres: manga.genres?.map((g: any) => typeof g === 'string' ? g : g._id),
+          genres: manga.genres?.map((g: any) => (typeof g === 'string' ? g : g._id)),
           mainGenre: typeof manga.mainGenre === 'string' ? manga.mainGenre : manga.mainGenre?._id,
         });
 
@@ -137,15 +156,27 @@ export class MangaFormComponent implements OnInit {
   }
 
   save(): void {
-    if (this.form.invalid || this.isUploading) return;
+    console.log('FORM VALID:', this.form.valid);
+    console.log('FORM VALUE:', this.form.value);
+
+    if (this.form.invalid || this.isUploading) {
+      console.log('FORM INVALID');
+      console.log(this.form);
+
+      this.form.markAllAsTouched();
+      return;
+    }
 
     const genres = this.form.value.genres || [];
+
+    console.log('GENRES:', genres);
+    console.log('MAIN GENRE:', this.form.value.mainGenre);
 
     if (!genres.includes(this.form.value.mainGenre)) {
       alert('El género principal debe estar dentro de los géneros seleccionados');
       return;
     }
-    
+
     const data: Manga = {
       title: this.form.value.title,
       status: this.form.value.status,
@@ -155,50 +186,64 @@ export class MangaFormComponent implements OnInit {
       synopsis: this.form.value.synopsis,
       coverUrl: this.form.value.coverUrl,
 
-      genres: Array.isArray(this.form.value.genres)
-        ? this.form.value.genres
-        : [this.form.value.genres],
+      genres: this.form.value.genres,
       mainGenre: this.form.value.mainGenre,
     };
 
-    if (this.isEditMode && this.mangaId) {
-      this.mangaService
-        .updateManga(this.mangaId, data)
-        .subscribe(() => this.router.navigate(['/mangas']));
-    } else {
-      this.mangaService.createManga(data).subscribe(() => this.router.navigate(['/mangas']));
-    }
+    console.log('DATA ENVIADA:', data);
+
+    this.mangaService.createManga(data).subscribe({
+      next: (res) => {
+        console.log('GUARDADO', res);
+        this.router.navigate(['/mangas']);
+      },
+      error: (err) => {
+        console.error('ERROR BACKEND:', err);
+      },
+    });
   }
 
   newGenre = '';
 
   addGenre(): void {
     const genreName = this.newGenre.trim();
+
     if (!genreName || this.isAddingGenre) return;
 
     const exists = this.genresList.some((g) => g.name.toLowerCase() === genreName.toLowerCase());
+
     if (exists) {
-      alert('Este género ya existe en la lista');
+      this.openGenreModal('error', 'Género duplicado', 'Este género ya existe en la lista.');
       return;
     }
 
     this.isAddingGenre = true;
 
     this.http
-      .post<any>(`${this.apiBase}/genres`, { name: genreName })
+      .post<any>(`${this.apiBase}/genres`, {
+        name: genreName,
+      })
       .subscribe({
         next: (genre) => {
+          // actualizar lista
           this.genresList = [...this.genresList, genre];
-          const currentGenres = this.form.get('genres')?.value || [];
-          this.form.get('genres')?.setValue([...currentGenres, genre._id]);
 
+          // agregar al form
+          const currentGenres = this.form.get('genres')?.value || [];
+          this.form.patchValue({
+            genres: [...currentGenres, genre._id],
+          });
+
+          // limpiar
           this.newGenre = '';
           this.isAddingGenre = false;
 
+          this.cd.markForCheck();
         },
+
         error: (err) => {
           this.isAddingGenre = false;
-          alert(err.error?.message || 'Error al crear género');
+          this.openGenreModal('error', 'Error', err.error?.message || 'Error al crear género.');
         },
       });
   }
@@ -221,9 +266,106 @@ export class MangaFormComponent implements OnInit {
       }
     }
 
-    // Actualizamos el valor del formulario
     this.form.get('genres')?.setValue(currentGenres);
     this.form.get('genres')?.markAsTouched();
+  }
+
+  toggleGenresPanel(): void {
+    this.showGenresPanel = !this.showGenresPanel;
+
+    if (this.showGenresPanel) {
+      setTimeout(() => {
+        this.genresPanel?.nativeElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 50);
+    }
+  }
+
+  startEditGenre(genre: any): void {
+    this.editingGenreId = genre._id;
+    this.editingGenreName = genre.name;
+  }
+
+  saveGenre(id: string): void {
+    const name = this.editingGenreName.trim();
+
+    if (!name) return;
+
+    this.http.put<any>(`${this.apiBase}/genres/${id}`, { name }).subscribe({
+      next: (updated) => {
+        this.genresList = this.genresList.map((g) => (g._id === id ? updated : g));
+        this.editingGenreId = null;
+        this.editingGenreName = '';
+      },
+    });
+  }
+
+  deleteGenre(id: string): void {
+    const genre = this.genresList.find((g) => g._id === id);
+
+    this.genreToDeleteId = id;
+
+    this.openGenreModal(
+      'delete',
+      'Eliminar género',
+      `¿Seguro que deseas eliminar el género "${genre?.name}"? Esta acción no se puede deshacer.`,
+    );
+  }
+
+  openGenreModal(mode: 'delete' | 'error' | 'success', title: string, message: string): void {
+    this.genreModalMode = mode;
+    this.genreModalTitle = title;
+    this.genreModalMessage = message;
+    this.showGenreModal = true;
+  }
+
+  closeGenreModal(): void {
+    this.showGenreModal = false;
+    this.genreToDeleteId = null;
+    this.isDeletingGenre = false;
+  }
+
+  confirmDeleteGenre(): void {
+    if (!this.genreToDeleteId) return;
+
+    this.isDeletingGenre = true;
+
+    this.http.delete(`${this.apiBase}/genres/${this.genreToDeleteId}`).subscribe({
+      next: () => {
+        this.genresList = this.genresList.filter((g) => g._id !== this.genreToDeleteId);
+
+        const selected = this.form.value.genres.filter((g: string) => g !== this.genreToDeleteId);
+
+        this.form.get('genres')?.setValue(selected);
+
+        if (this.form.value.mainGenre === this.genreToDeleteId) {
+          this.form.get('mainGenre')?.setValue('');
+        }
+
+        this.closeGenreModal();
+        this.cd.markForCheck();
+      },
+
+      error: () => {
+        this.isDeletingGenre = false;
+
+        this.openGenreModal('error', 'Error', 'No se pudo eliminar el género.');
+      },
+    });
+  }
+
+  get filteredGenres() {
+    return this.genresList.filter((g) =>
+      g.name.toLowerCase().includes(this.genreSearch.toLowerCase()),
+    );
+  }
+
+  get filteredAdminGenres() {
+    return this.genresList.filter((g) =>
+      g.name.toLowerCase().includes(this.adminGenreSearch.toLowerCase()),
+    );
   }
 
   get title() {
