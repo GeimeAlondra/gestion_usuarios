@@ -366,6 +366,7 @@ body {
     transform: scale(1) translateX(0);
   }
 }
+/* #endregion */
 
 .media-preview {
   position: relative;

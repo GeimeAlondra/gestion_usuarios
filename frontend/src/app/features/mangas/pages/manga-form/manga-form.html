@@ -5,94 +5,126 @@
     {{ isEditMode ? 'Editar Manga' : 'Añadir Manga' }}
   </h2>
 
-  <form [formGroup]="form" (ngSubmit)="save()">
-    <div class="row g-0">
+  <form [formGroup]="form" (ngSubmit)="save()" class="row mt-4 g-4" autocomplete="off">
+    <!-- TITULO -->
+    <div class="col-12">
       <label class="form-label">Título</label>
-      <input formControlName="title" placeholder="Título" />
+      <input class="form-control" formControlName="title" placeholder="Título" />
       @if (title?.invalid && title?.touched) {
-      <small class="text-danger"> Este campo no puede quedar vacío, mínimo 3 caracteres </small>
+        <small class="text-danger"> Este campo no puede quedar vacío, mínimo 3 caracteres </small>
       }
-
     </div>
 
-    <div class="row g-0">
+    <!-- ESTADO -->
+    <div class="col-md-6">
       <label class="form-label">Estado</label>
-      <select formControlName="status">
+
+      <select class="form-select" formControlName="status">
         <option value="emision">En emisión</option>
         <option value="finalizado">Finalizado</option>
         <option value="proximamente">Próximamente</option>
       </select>
     </div>
 
-    <div class="row g-0">
-      <label class="form-label">Géneros</label>
+    <!-- CAPITULOS -->
+    <div class="col-md-6">
+      <label class="form-label">Capítulos</label>
 
-      <!-- Contenedor con scroll si hay muchos géneros -->
-      <div class="genres-container p-2 border rounded" >
-        @for (g of genresList; track g._id) {
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" [id]="g._id" [checked]="form.value.genres?.includes(g._id)" (change)="toggleGenre(g._id, $event)"/>
-            <label class="form-check-label" [for]="g._id">
-              {{ g.name }}
-            </label>
-          </div>
-        }
-      </div>
+      <input
+        type="number"
+        class="form-control"
+        formControlName="chapters"
+        placeholder="Capítulos"
+      />
+    </div>
 
-      <div class="add-genre">
+    <!-- AÑO -->
+    <div class="col-md-6">
+      <label class="form-label">Año publicado</label>
+
+      <input type="number" class="form-control" formControlName="year" placeholder="Año" />
+
+      @if (year?.invalid && year?.touched) {
+        <small class="text-danger"> Coloque un año válido </small>
+      }
+    </div>
+
+    <!-- AUTOR -->
+    <div class="col-md-6">
+      <label class="form-label">Autor</label>
+
+      <input class="form-control" formControlName="author" placeholder="Autor" />
+
+      @if (author?.invalid && author?.touched) {
+        <small class="text-danger"> Coloque un nombre válido </small>
+      }
+    </div>
+
+    <!-- GENEROS -->
+    <div class="col-12">
+      <div class="genre-search">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <label class="form-label m-0">
+            <i class="bi bi-search me-2"></i>
+            Géneros
+          </label>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" (click)="toggleGenresPanel()">
+          <i class="bi bi-gear me-2"></i>
+          Administrar
+        </button>
+
         <input
-          [(ngModel)]="newGenre"
+          type="text"
+          class="form-control mb-1"
+          [(ngModel)]="genreSearch"
           [ngModelOptions]="{ standalone: true }"
-          placeholder="Nuevo género"
+          placeholder="Buscar género..."
         />
-        <button type="button" class="btn btn-primary" (click)="addGenre()">Añadir</button>
+
+        <div class="genres-container">
+          @for (g of filteredGenres; track g._id ?? $index) {
+            <div class="form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                [id]="'genre-' + g._id"
+                [checked]="g._id && form.value.genres?.includes(g._id)"
+                (change)="toggleGenre(g._id, $event)"
+              />
+
+              <label class="form-check-label" [for]="'genre-' + g._id">
+                {{ g.name }}
+              </label>
+            </div>
+          }
+        </div>
       </div>
     </div>
 
-    <div class="row g-0">
+    <!-- GENERO PRINCIPAL -->
+    <div class="col-12">
       <label class="form-label">Género principal</label>
 
       <select formControlName="mainGenre" class="form-select">
-        @for (g of genresList; track g._id) {
+        @for (g of filteredGenres; track g._id) {
           @if (form.value.genres?.includes(g._id)) {
-            <option [ngValue]="g._id">{{ g.name }}</option>
+            <option [ngValue]="g._id">
+              {{ g.name }}
+            </option>
           }
         }
       </select>
     </div>
 
-    <div class="row g-0">
-      <label class="form-label">Año publicado</label>
-      <input type="number" formControlName="year" placeholder="Año" />
-      @if (year?.invalid && year?.touched) {
-        <small class="text-danger"> Coloque un año valido, entre 1900 y el año actual </small>
-      }
-    </div>
-
-    <div class="row g-0">
-      <label class="form-label">Capitulos</label>
-      <input type="number" formControlName="chapters" placeholder="Capítulos" />
-    </div>
-
-    <div class="row g-0">
-      <label class="form-label">Autor</label>
-      <input formControlName="author" placeholder="Autor" />
-      @if (author?.invalid && author?.touched) {
-        <small class="text-danger"> Coloque un nombre de autor válido o coloque "Anonimo". </small>
-      }
-    </div>
-
-    <div class="row g-0">
+    <!-- SINOPSIS -->
+    <div class="col-12">
       <label class="form-label">Sinopsis</label>
-      <textarea formControlName="synopsis" placeholder="Sinopsis"></textarea>
-      @if (synopsis?.invalid && synopsis?.touched) {
-        <small class="text-danger">
-          Capacidad máxima de texto superada, maximo 2000 carateres
-        </small>
-      }
+      <textarea class="form-control" formControlName="synopsis" placeholder="Sinopsis"></textarea>
     </div>
 
-    <div class="row g-0">
+    <!-- PORTADA -->
+    <div class="col-12">
       <label class="form-label">Portada</label>
 
       <div class="cover-tabs">
@@ -101,7 +133,7 @@
           class="cover-tab"
           [class.active]="coverMode === 'url'"
           (click)="setCoverMode('url')"
-          >
+        >
           <i class="bi bi-link-45deg"></i> URL
         </button>
         <button
@@ -109,17 +141,18 @@
           class="cover-tab"
           [class.active]="coverMode === 'file'"
           (click)="setCoverMode('file')"
-          >
+        >
           <i class="bi bi-upload"></i> Subir imagen
         </button>
       </div>
 
       @if (coverMode === 'url') {
         <input
-            formControlName="coverUrl"
-            placeholder="https://ejemplo.com/portada.jpg"
-            (input)="onUrlInput($event)"
-            />
+          class="form-control"
+          formControlName="coverUrl"
+          placeholder="https://ejemplo.com/portada.jpg"
+          (input)="onUrlInput($event)"
+        />
         @if (coverUrl?.invalid && coverUrl?.touched) {
           <small class="text-danger">Ingrese una URL válida</small>
         }
@@ -157,12 +190,105 @@
       }
     </div>
 
-    <div class="form-actions">
-      <button type="button" class="btn-cancel" routerLink="/mangas">Cancelar</button>
+    <!-- BOTONES -->
+    <div class="col-12">
+      <div class="form-actions">
+        <button type="button" class="btn-cancel" routerLink="/mangas">Cancelar</button>
 
-      <button type="submit" class="btn-submit">
-        {{ isEditMode ? 'Editar Manga' : 'Guardar Manga' }}
-      </button>
+        <button type="submit" class="btn-submit">
+          {{ isEditMode ? 'Editar Manga' : 'Guardar Manga' }}
+        </button>
+      </div>
     </div>
   </form>
+
+  @if (showGenresPanel) {
+    <div class="genres-admin-card mt-4" #genresPanel>
+      <div class="genres-admin-header">
+        <h3>Géneros</h3>
+
+        <button type="button" class="btn-close-panel" (click)="showGenresPanel = false">✕</button>
+      </div>
+
+      <!-- CREAR -->
+      <div class="genre-create">
+        <input
+          [(ngModel)]="newGenre"
+          class="form-control"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="Nuevo género"
+        />
+
+        <button type="button" (click)="addGenre()">Agregar</button>
+      </div>
+
+      <!-- Buscar -->
+      <div class="genre-create">
+        <input
+          type="text"
+          class="form-control mb-3"
+          [(ngModel)]="adminGenreSearch"
+          [ngModelOptions]="{ standalone: true }"
+          placeholder="Buscar género..."
+        />
+      </div>
+
+      <!-- LISTA -->
+      <div class="genre-admin-list">
+        @for (g of filteredAdminGenres; track g._id) {
+          <div class="genre-admin-item">
+            @if (editingGenreId === g._id) {
+              <input
+                class="form-control"
+                [(ngModel)]="editingGenreName"
+                [ngModelOptions]="{ standalone: true }"
+              />
+
+              <button type="button" class="btn btn-outline-primary" (click)="saveGenre(g._id)">
+                Guardar
+              </button>
+            } @else {
+              <span>{{ g.name }}</span>
+
+              <div class="genre-actions">
+                <button type="button" (click)="startEditGenre(g)">
+                  <i class="bi bi-pencil"></i>
+                </button>
+
+                <button type="button" (click)="deleteGenre(g._id)">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
 </div>
+
+@if (showGenreModal) {
+  <div class="manga-modal-overlay" (click)="closeGenreModal()">
+    <div class="manga-modal-delete" (click)="$event.stopPropagation()">
+      <h3 class="manga-modal-title border-bottom pb-2">
+        {{ genreModalTitle }}
+      </h3>
+
+      <p class="manga-modal-body">
+        {{ genreModalMessage }}
+      </p>
+
+      <div class="manga-modal-actions border-top pt-3 mt-2">
+        <button type="button" class="btn-cancel" (click)="closeGenreModal()">Cerrar</button>
+
+        @if (genreModalMode === 'delete') {
+          <button type="button" class="btn-confirm-delete" (click)="confirmDeleteGenre()">
+            <i class="bi bi-trash-fill"></i>
+
+            {{ isDeletingGenre ? 'Eliminando...' : 'Eliminar' }}
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+}
