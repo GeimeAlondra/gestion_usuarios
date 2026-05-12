@@ -1,6 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { MangaService, Manga } from '../../../../core/services/manga.service';
@@ -30,6 +37,7 @@ export class MangaFormComponent implements OnInit {
   form!: FormGroup;
   isEditMode = false;
   isAddingGenre = false;
+  isSaving = false;
   mangaId: string | null = null;
 
   genresList: any[] = [];
@@ -74,7 +82,13 @@ export class MangaFormComponent implements OnInit {
       chapters: [0, [Validators.required, Validators.min(0)]],
       author: ['', Validators.required],
       synopsis: ['', [Validators.maxLength(1000)]],
-      coverUrl: ['', [Validators.required]],
+      coverUrl: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^(https?:\/\/.*\.(?:png|jpg|jpeg|webp|gif))(\\?.*)?$/i),
+        ],
+      ],
     });
 
     this.form.get('genres')?.valueChanges.subscribe((selected: string[]) => {
@@ -165,24 +179,23 @@ export class MangaFormComponent implements OnInit {
   }
 
   save(): void {
-    console.log('FORM VALID:', this.form.valid);
-    console.log('FORM VALUE:', this.form.value);
-
-    if (this.form.invalid || this.isUploading) {
-      console.log('FORM INVALID');
-      console.log(this.form);
-
+    if (this.form.invalid || this.isUploading || this.isSaving) {
       this.form.markAllAsTouched();
       return;
     }
 
+    this.isSaving = true;
+
     const genres = this.form.value.genres || [];
 
-    console.log('GENRES:', genres);
-    console.log('MAIN GENRE:', this.form.value.mainGenre);
-
     if (!genres.includes(this.form.value.mainGenre)) {
-      alert('El género principal debe estar dentro de los géneros seleccionados');
+      this.openGenreModal(
+        'error',
+        'Error',
+        'El género principal debe estar dentro de los géneros seleccionados',
+      );
+
+      this.isSaving = false;
       return;
     }
 
@@ -194,24 +207,21 @@ export class MangaFormComponent implements OnInit {
       author: this.form.value.author,
       synopsis: this.form.value.synopsis,
       coverUrl: this.form.value.coverUrl,
-
       genres: this.form.value.genres,
       mainGenre: this.form.value.mainGenre,
     };
 
-    console.log('DATA ENVIADA:', data);
+    this.mangaService.createManga(data).subscribe({
+      next: () => {
+        this.isSaving = false;
 
-    const request$ = this.isEditMode && this.mangaId
-      ? this.mangaService.updateManga(this.mangaId, data)
-      : this.mangaService.createManga(data);
-    
-    request$.subscribe({
-      next: (res) => {
-        console.log('GUARDADO', res);
         this.router.navigate(['/mangas']);
       },
+
       error: (err) => {
-        console.error('ERROR BACKEND:', err);
+        this.isSaving = false;
+
+        this.openGenreModal('error', 'Error', err.error?.message || 'No se pudo guardar el manga.');
       },
     });
   }
@@ -270,7 +280,6 @@ export class MangaFormComponent implements OnInit {
         currentGenres.push(genreId);
       }
     } else {
-  
       const index = currentGenres.indexOf(genreId);
       if (index > -1) {
         currentGenres.splice(index, 1);

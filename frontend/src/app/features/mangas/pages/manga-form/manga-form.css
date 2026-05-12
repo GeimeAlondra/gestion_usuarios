@@ -78,20 +78,16 @@ textarea:focus::placeholder {
   display: flex;
   justify-content: flex-end;
   gap: 0.8rem;
-
   margin-top: 0.8rem;
 }
 
 /* CANCEL */
 .btn-cancel {
   padding: 10px 14px;
-
   background: transparent;
   color: #cbd5e1;
-
   border: 1px solid #2a3a52;
   border-radius: 8px;
-
   cursor: pointer;
   transition: 0.2s;
 }
@@ -103,22 +99,57 @@ textarea:focus::placeholder {
 /* SUBMIT */
 .btn-submit {
   padding: 10px 16px;
-
   background: #facc15;
   color: #0b0f16;
-
   border: none;
   border-radius: 8px;
-
   font-weight: 700;
-
   cursor: pointer;
   transition: 0.2s;
 }
 
-.btn-submit:hover {
+.btn-submit:hover:not(:disabled) {
   background: #eab308;
   transform: translateY(-1px);
+}
+
+.btn-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-submit:disabled {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-submit:disabled::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+  animation: loadingSwipe 2s linear infinite;
+}
+
+@keyframes loadingSwipe {
+  from {
+    left: -40%;
+  }
+
+  to {
+    left: 120%;
+  }
+}
+
+.is-invalid {
+  border-color: #ef4444 !important;
+}
+
+.is-invalid:focus {
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
 }
 
 .cover-tabs {
