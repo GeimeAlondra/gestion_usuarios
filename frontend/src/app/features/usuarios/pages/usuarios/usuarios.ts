@@ -166,6 +166,7 @@ export class UsuariosComponent implements OnInit {
     this.usersService.deleteUser(idToDelete).subscribe({
       next: () => {
         this.users = [...this.users.filter((u) => u._id !== idToDelete)];
+        this.applyFilters();
         this.userToDelete = null;
         this.isDeleting = false;
         this.deleteSuccess = `El usuario "${nameToDelete}" fue eliminado correctamente.`;
