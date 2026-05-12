@@ -322,10 +322,15 @@
 
 /* #region filtro */
 .filters-card {
-  background: #131822;
-  border-radius: 10px;
-  padding: 1.25rem;
+  background: rgba(17, 24, 39, 0.78);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  padding: 1.4rem;
   margin-bottom: 1.5rem;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
 }
 
 .filters-grid {

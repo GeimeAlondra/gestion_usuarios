@@ -25,6 +25,8 @@ export class MangaListComponent implements OnInit {
   mangaToDelete: Manga | null = null;
   isDeleting = false;
 
+  isLoading = true;
+
   mangas: Manga[] = [];
   userRole: string | null = null;
 
@@ -98,10 +100,12 @@ export class MangaListComponent implements OnInit {
   }
 
   loadMangas(): void {
+    this.isLoading = true;
     this.mangaService.getMangas().subscribe({
       next: (data) => {
         this.mangas = [...data];
         this.extractGenres();
+        this.isLoading = false;
         this.cdr.markForCheck();
       },
       error: (err) => console.error('Error cargando mangas', err)
@@ -112,6 +116,7 @@ export class MangaListComponent implements OnInit {
     this.mangaService.getFavorites().subscribe({
       next: (favs) => {
         this.favoriteIds = new Set(favs.map(f => f._id!));
+        this.isLoading = false;
         this.cdr.markForCheck();
       }
     });
