@@ -9,38 +9,30 @@
             <!-- Buscar -->
             <div class="filter-group">
               <label class="filter-label">Buscar manga</label>
-
               <input
                 type="text"
                 class="filter-input"
                 placeholder="Nombre del manga..."
                 [(ngModel)]="filters.search"
+                (input)="resetPage()"
               />
             </div>
 
             <!-- Estado -->
             <div class="filter-group">
               <label class="filter-label">Estado</label>
-
-              <select class="filter-select" [(ngModel)]="filters.status">
+              <select class="filter-select" [(ngModel)]="filters.status" (change)="resetPage()">
                 <option value="">Todos</option>
-
-                <option *ngFor="let s of statuses" [value]="s">
-                  {{ s }}
-                </option>
+                <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
               </select>
             </div>
 
             <!-- Género -->
             <div class="filter-group">
               <label class="filter-label">Género</label>
-
-              <select class="filter-select" [(ngModel)]="filters.genre">
+              <select class="filter-select" [(ngModel)]="filters.genre" (change)="resetPage()">
                 <option value="">Todos</option>
-
-                <option *ngFor="let g of genres" [value]="g">
-                  {{ g }}
-                </option>
+                <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
               </select>
             </div>
           </div>
@@ -65,18 +57,15 @@
             (click)="showOnlyFavorites = !showOnlyFavorites"
           >
             <i class="bi" [ngClass]="showOnlyFavorites ? 'bi-star-fill' : 'bi-star'"></i>
-
             {{ showOnlyFavorites ? 'Todos los mangas' : 'Mis favoritos' }}
           </button>
         }
-
         <button *ngIf="canEdit()" routerLink="/mangas/crear" class="btn-create">
           <i class="bi bi-plus-circle"></i>
           Nuevo Manga
         </button>
       </div>
     </div>
-
   </div>
   
   @if (isLoading) {
@@ -91,7 +80,6 @@
     </div>
   }
 
-  <!-- Mensaje cuando no hay favoritos -->
   @if (showOnlyFavorites && displayedMangas.length === 0) {
     <div class="empty-favorites">
       <i class="bi bi-star" style="font-size: 2.5rem; color: #facc15"></i>
@@ -110,7 +98,6 @@
           {{ manga.status }}
         </span>
         @if (userRole === 'Viewer') {
-          <!-- Botón favorito sobre la portada -->
           <button
             class="btn-fav-overlay"
             [class.btn-fav-overlay--active]="isFavorite(manga)"
@@ -128,7 +115,6 @@
             <span>{{ manga.title }}</span>
             <span class="media-type">{{ manga.mainGenre?.name }}</span>
           </div>
-
           <div class="genres">
             @for (g of manga.genres.slice(0, 10); track g._id) {
               @if (g._id !== manga.mainGenre?._id) {
@@ -141,15 +127,11 @@
         <div class="card-accions">
           <div class="meta-row">
             <span><i class="bi bi-calendar3"></i> {{ manga.year }}</span>
-            <span class="chapters-info"
-              ><i class="bi bi-journal-bookmark"></i> {{ manga.chapters }} caps</span
-            >
+            <span class="chapters-info"><i class="bi bi-journal-bookmark"></i> {{ manga.chapters }} caps</span>
           </div>
-
           <div class="meta-row">
             <span><i class="bi bi-person-lines-fill"></i> {{ manga.author }}</span>
           </div>
-
           <div class="card-admin-icons" *ngIf="canEdit()">
             <button routerLink="/mangas/editar/{{ manga._id }}" class="icon-edit">
               <i class="bi bi-pencil-square"></i> Editar
@@ -158,12 +140,46 @@
               <i class="bi bi-trash"></i> Eliminar
             </button>
           </div>
-
           <button routerLink="/mangas/{{ manga._id }}" class="btn-view">Ver detalles</button>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- PAGINACIÓN -->
+  @if (totalPages > 1) {
+    <nav class="pagination-bar">
+      <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+
+      @if (pageNumbers[0] > 1) {
+        <button class="page-btn" (click)="goToPage(1)">1</button>
+        @if (pageNumbers[0] > 2) {
+          <span class="page-ellipsis">…</span>
+        }
+      }
+
+      @for (p of pageNumbers; track p) {
+        <button class="page-btn" [class.page-btn--active]="p === currentPage" (click)="goToPage(p)">
+          {{ p }}
+        </button>
+      }
+
+      @if (pageNumbers[pageNumbers.length - 1] < totalPages) {
+        @if (pageNumbers[pageNumbers.length - 1] < totalPages - 1) {
+          <span class="page-ellipsis">…</span>
+        }
+        <button class="page-btn" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+      }
+
+      <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+
+      <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
+    </nav>
+  }
 </div>
 
 @if (mangaToDelete) {
@@ -171,8 +187,7 @@
     <div class="manga-modal-delete" (click)="$event.stopPropagation()">
       <h3 class="manga-modal-title border-bottom pb-2">Eliminar Manga</h3>
       <p class="manga-modal-body">
-        ¿Seguro que deseas eliminar el manga <strong>{{ mangaToDelete.title }}</strong
-        >? Esta acción no se puede deshacer.
+        ¿Seguro que deseas eliminar el manga <strong>{{ mangaToDelete.title }}</strong>? Esta acción no se puede deshacer.
       </p>
       <div class="manga-modal-actions border-top pt-3 mt-2">
         <button type="button" class="btn-cancel" (click)="cancelDelete()">Cancelar</button>

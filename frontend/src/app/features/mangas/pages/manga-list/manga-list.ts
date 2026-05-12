@@ -49,7 +49,11 @@ export class MangaListComponent implements OnInit {
 
   genres: string[] = [];
 
-  get displayedMangas(): Manga[] {
+  // PAGINACIÓN
+  currentPage = 1;
+  pageSize = 4;
+
+  get filteredMangas(): Manga[] {
     let filtered = [...this.mangas];
 
     if (this.showOnlyFavorites) {
@@ -58,16 +62,13 @@ export class MangaListComponent implements OnInit {
 
     if (this.filters.search.trim()) {
       const text = this.filters.search.toLowerCase();
-
       filtered = filtered.filter(m =>
         m.title.toLowerCase().includes(text)
       );
     }
 
     if (this.filters.status) {
-      filtered = filtered.filter(
-        m => m.status === this.filters.status
-      );
+      filtered = filtered.filter(m => m.status === this.filters.status);
     }
 
     if (this.filters.genre) {
@@ -77,6 +78,37 @@ export class MangaListComponent implements OnInit {
     }
 
     return filtered;
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredMangas.length / this.pageSize);
+  }
+
+  get displayedMangas(): Manga[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredMangas.slice(start, start + this.pageSize);
+  }
+
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    const current = this.currentPage;
+    const delta = 2;
+    const pages: number[] = [];
+
+    for (let i = Math.max(1, current - delta); i <= Math.min(total, current + delta); i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  resetPage(): void {
+    this.currentPage = 1;
   }
 
   ngOnInit(): void {
@@ -136,6 +168,7 @@ export class MangaListComponent implements OnInit {
       status: '',
       genre: '',
     };
+    this.resetPage();
   }
 
   toggleFavorite(manga: Manga, event: Event): void {

@@ -1,11 +1,21 @@
 import { Component, OnInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { MangaService, Manga } from '../../../../core/services/manga.service';
 import { MangaNavbarComponent } from '../../../../core/layouts/manga-navbar/manga-navbar';
 import { FormsModule } from '@angular/forms';
+
+function minLengthArray(min: number) {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+    if (!Array.isArray(value) || value.length < min) {
+      return { minLengthArray: true };
+    }
+    return null;
+  };
+}
 
 @Component({
   selector: 'app-manga-form',
@@ -41,7 +51,6 @@ export class MangaFormComponent implements OnInit {
   genreToDeleteId: string | null = null;
   isDeletingGenre = false;
 
-  /* Para probar en develop fuera de render */
   /* private readonly apiBase = 'http://localhost:3000/api'; */
   private readonly apiBase = 'https://gestion-backend-8p1l.onrender.com/api';
 
@@ -56,7 +65,7 @@ export class MangaFormComponent implements OnInit {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
       status: ['emision', Validators.required],
-      genres: [[], Validators.required],
+      genres: [[], [minLengthArray(1)]],
       mainGenre: ['', Validators.required],
       year: [
         new Date().getFullYear(),
@@ -192,7 +201,11 @@ export class MangaFormComponent implements OnInit {
 
     console.log('DATA ENVIADA:', data);
 
-    this.mangaService.createManga(data).subscribe({
+    const request$ = this.isEditMode && this.mangaId
+      ? this.mangaService.updateManga(this.mangaId, data)
+      : this.mangaService.createManga(data);
+    
+    request$.subscribe({
       next: (res) => {
         console.log('GUARDADO', res);
         this.router.navigate(['/mangas']);
@@ -248,18 +261,16 @@ export class MangaFormComponent implements OnInit {
       });
   }
 
-  // Añade este método en tu archivo .ts
   toggleGenre(genreId: string, event: Event): void {
     const checkbox = event.target as HTMLInputElement;
     const currentGenres = [...(this.form.get('genres')?.value || [])];
 
     if (checkbox.checked) {
-      // Si se marca y no está en el array, lo añadimos
       if (!currentGenres.includes(genreId)) {
         currentGenres.push(genreId);
       }
     } else {
-      // Si se desmarca, lo filtramos para quitarlo
+  
       const index = currentGenres.indexOf(genreId);
       if (index > -1) {
         currentGenres.splice(index, 1);

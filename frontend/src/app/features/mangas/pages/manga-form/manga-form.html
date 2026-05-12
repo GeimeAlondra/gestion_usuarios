@@ -35,7 +35,11 @@
         class="form-control"
         formControlName="chapters"
         placeholder="Capítulos"
+        min="0"
       />
+      @if (chapters?.invalid && chapters?.touched) {
+        <small class="text-danger">El número de capítulos no puede ser negativo.</small>
+      }
     </div>
 
     <!-- AÑO -->
@@ -99,6 +103,9 @@
             </div>
           }
         </div>
+        @if (genres?.invalid && genres?.touched) {
+          <small class="text-danger">Selecciona al menos un género.</small>
+        }
       </div>
     </div>
 
@@ -115,6 +122,9 @@
           }
         }
       </select>
+      @if (mainGenre?.invalid && mainGenre?.touched) {
+        <small class="text-danger">Selecciona un género principal.</small>
+      }
     </div>
 
     <!-- SINOPSIS -->

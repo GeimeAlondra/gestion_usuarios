@@ -1,27 +1,23 @@
 <app-manga-navbar />
 <div class="layout">
-
   <main class="main-content">
 
     <div class="section-header">
       <h2 class="section-title">Usuarios</h2>
       <a routerLink="/usuarios/crear" class="btn-new">
         <i class="bi bi-plus-circle"></i>
-        Nuevo usuario</a>
+        Nuevo usuario
+      </a>
     </div>
     
     <!-- FILTROS -->
     @if (isSearch === true) {
       <div class="filters-card">
-
         <div class="filters-grid">
 
           <!-- Buscar -->
           <div class="filter-group">
-            <label class="filter-label">
-              Buscar usuario
-            </label>
-
+            <label class="filter-label">Buscar usuario</label>
             <input
               type="text"
               class="filter-input"
@@ -34,32 +30,16 @@
           <!-- Rol -->
           <div class="filter-group">
             <label class="filter-label">Rol</label>
-
-            <select
-              class="filter-select"
-              [(ngModel)]="filters.role"
-              (change)="applyFilters()"
-            >
+            <select class="filter-select" [(ngModel)]="filters.role" (change)="applyFilters()">
               <option value="">Todos</option>
-
-              <option
-                *ngFor="let role of roles"
-                [value]="role"
-              >
-                {{ role }}
-              </option>
+              <option *ngFor="let role of roles" [value]="role">{{ role }}</option>
             </select>
           </div>
 
           <!-- Estado -->
           <div class="filter-group">
             <label class="filter-label">Estado</label>
-
-            <select
-              class="filter-select"
-              [(ngModel)]="filters.status"
-              (change)="applyFilters()"
-            >
+            <select class="filter-select" [(ngModel)]="filters.status" (change)="applyFilters()">
               <option value="">Todos</option>
               <option value="active">Activo</option>
               <option value="inactive">Inactivo</option>
@@ -69,111 +49,142 @@
         </div>
 
         <div class="filters-actions">
-          <button
-            class="btn-filter-reset"
-            (click)="resetFilters()"
-          >
+          <button class="btn-filter-reset" (click)="resetFilters()">
             <i class="bi bi-arrow-counterclockwise"></i>
             Limpiar filtros
           </button>
         </div>
-
       </div>
     }
 
     @if (deleteSuccess) {
-    <div class="list-success">{{ deleteSuccess }}</div>
+      <div class="list-success">{{ deleteSuccess }}</div>
     }
 
     @if (isLoading) {
-    <p class="list-loading">Cargando usuarios...</p>
-    <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
-    <div class="spinner-grow text-light" style="width: 3rem; height: 3rem;" role="status">
-      <span class="visually-hidden">Loading...</span>
-    </div>
+      <p class="list-loading">Cargando usuarios...</p>
+      <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <div class="spinner-grow text-light" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
     }
 
-
-
     @if (loadError) {
-    <div class="list-error">{{ loadError }}</div>
+      <div class="list-error">{{ loadError }}</div>
     }
 
     @if (!isLoading && !loadError) {
-    @if (users.length === 0) {
-    <p class="list-empty">No hay usuarios registrados.</p>
-    } @else {
-    <div class="table-wrapper">
-      <table class="users-table">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Rol</th>
-            <th>Estado</th>
-            <th>Fecha de registro</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (user of filteredUsers; track user._id) {
-          <tr>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-              <span class="badge badge--{{ user.role | lowercase }}">
-                {{ user.role }}
-              </span>
-            </td>
-            <td>
-              <span class="badge" [class.badge--active]="user.isActive" [class.badge--inactive]="!user.isActive">
-                {{ user.isActive ? 'Activo' : 'Inactivo' }}
-              </span>
-            </td>
-            <td>{{ user.createdAt | date: 'dd/MM/yyyy' }}</td>
-            <td class="actions-cell">
-              <a [routerLink]="['/usuarios/editar', user._id]" class="btn-edit">Editar</a>
-              <button type="button" class="btn-delete" [disabled]="user._id === currentUserId"
-                [title]="user._id === currentUserId ? 'No puedes eliminarte a ti mismo' : 'Eliminar usuario'"
-                (click)="openDeleteModal(user)">
-                Eliminar
+      @if (users.length === 0) {
+        <p class="list-empty">No hay usuarios registrados.</p>
+      } @else {
+        <div class="table-wrapper">
+          <table class="users-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Fecha de registro</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (user of pagedUsers; track user._id) {
+                <tr>
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>
+                    <span class="badge badge--{{ user.role | lowercase }}">{{ user.role }}</span>
+                  </td>
+                  <td>
+                    <span class="badge" [class.badge--active]="user.isActive" [class.badge--inactive]="!user.isActive">
+                      {{ user.isActive ? 'Activo' : 'Inactivo' }}
+                    </span>
+                  </td>
+                  <td>{{ user.createdAt | date: 'dd/MM/yyyy' }}</td>
+                  <td class="actions-cell">
+                    <a [routerLink]="['/usuarios/editar', user._id]" class="btn-edit">Editar</a>
+                    <button
+                      type="button"
+                      class="btn-delete"
+                      [disabled]="user._id === currentUserId"
+                      [title]="user._id === currentUserId ? 'No puedes eliminarte a ti mismo' : 'Eliminar usuario'"
+                      (click)="openDeleteModal(user)"
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- PAGINACIÓN -->
+        @if (totalPages > 1) {
+          <nav class="pagination-bar">
+            <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+              <i class="bi bi-chevron-left"></i>
+            </button>
+
+            @if (pageNumbers[0] > 1) {
+              <button class="page-btn" (click)="goToPage(1)">1</button>
+              @if (pageNumbers[0] > 2) {
+                <span class="page-ellipsis">…</span>
+              }
+            }
+
+            @for (p of pageNumbers; track p) {
+              <button class="page-btn" [class.page-btn--active]="p === currentPage" (click)="goToPage(p)">
+                {{ p }}
               </button>
-            </td>
-          </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-    }
+            }
+
+            @if (pageNumbers[pageNumbers.length - 1] < totalPages) {
+              @if (pageNumbers[pageNumbers.length - 1] < totalPages - 1) {
+                <span class="page-ellipsis">…</span>
+              }
+              <button class="page-btn" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+            }
+
+            <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+              <i class="bi bi-chevron-right"></i>
+            </button>
+
+            <span class="page-info">{{ currentPage }} / {{ totalPages }}</span>
+          </nav>
+        }
+      }
     }
   </main>
 </div>
 
 @if (userToDelete) {
-<div class="user-modal-overlay" (click)="cancelDelete()">
-  <div class="user-modal-delete" (click)="$event.stopPropagation()">
-    <h3 class="user-modal-title border-bottom pb-2">Eliminar usuario</h3>
-    <p class="user-modal-body">
-      ¿Estás seguro de que deseas eliminar al usuario
-      <strong>{{ userToDelete.name }}</strong>?
-      Esta acción no se puede deshacer y el usuario perderá el acceso de inmediato.
-    </p>
+  <div class="user-modal-overlay" (click)="cancelDelete()">
+    <div class="user-modal-delete" (click)="$event.stopPropagation()">
+      <h3 class="user-modal-title border-bottom pb-2">Eliminar usuario</h3>
+      <p class="user-modal-body">
+        ¿Estás seguro de que deseas eliminar al usuario
+        <strong>{{ userToDelete.name }}</strong>?
+        Esta acción no se puede deshacer y el usuario perderá el acceso de inmediato.
+      </p>
 
-    @if (deleteError) {
-    <div class="user-modal-error">{{ deleteError }}</div>
-    }
+      @if (deleteError) {
+        <div class="user-modal-error">{{ deleteError }}</div>
+      }
 
-    <div class="user-modal-actions border-top pt-3 mt-2">
-      <button type="button" class="btn-cancel" (click)="cancelDelete()" [disabled]="isDeleting">
-        Cancelar
-      </button>
-      <button type="button" class="btn-confirm-delete" (click)="confirmDelete()" [disabled]="isDeleting">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        {{ isDeleting ? 'Eliminando...' : 'Sí, eliminar' }}
-      </button>
+      <div class="user-modal-actions border-top pt-3 mt-2">
+        <button type="button" class="btn-cancel" (click)="cancelDelete()" [disabled]="isDeleting">
+          Cancelar
+        </button>
+        <button type="button" class="btn-confirm-delete" (click)="confirmDelete()" [disabled]="isDeleting">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+          {{ isDeleting ? 'Eliminando...' : 'Sí, eliminar' }}
+        </button>
+      </div>
     </div>
   </div>
-</div>
 }
