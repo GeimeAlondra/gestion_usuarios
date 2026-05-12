@@ -204,9 +204,30 @@ const clearActivityLogs = async (req, res) => {
   }
 };
 
+// Limpiar logs de usuarios que ya no existen
+const clearOrphanLogs = async (req, res) => {
+  try {
+    const User = require('../models/user');
+    const existingUserIds = await User.find().distinct('_id');
+
+    const result = await ActivityLog.deleteMany({
+      user: { $nin: existingUserIds }
+    });
+
+    res.json({
+      message: `Se eliminaron ${result.deletedCount} registros huérfanos.`,
+      deletedCount: result.deletedCount,
+    });
+  } catch (error) {
+    console.error('[clearOrphanLogs]', error);
+    res.status(500).json({ message: 'Error al limpiar registros huérfanos' });
+  }
+};
+
 module.exports = {
   getActivityLogs,
   getEditorActivity,
   getActivitySummary,
   clearActivityLogs,
+  clearOrphanLogs
 };

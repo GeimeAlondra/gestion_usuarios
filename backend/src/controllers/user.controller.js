@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const logActivity = require("../utils/activityLogger");
+const ActivityLog = require('../models/activityLog');
 
 const getUsers = async (req, res) => {
   try {
@@ -115,32 +116,34 @@ const deleteUser = async (req, res) => {
     const { id } = req.params;
 
     if (req.user.id === id) {
-      return res
-        .status(400)
-        .json({ message: "No puedes eliminarte a ti mismo" });
+      return res.status(400).json({ message: 'No puedes eliminarte a ti mismo' });
     }
 
     const user = await User.findById(id);
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     }
+
+    // Borrar todos los registros de actividad del usuario antes de eliminarlo
+    const ActivityLog = require('../models/activityLog');
+    await ActivityLog.deleteMany({ user: user._id });  
 
     await User.findByIdAndDelete(id);
 
     await logActivity({
       userId: req.user.id,
       userRole: req.user.role,
-      action: "DELETE_USER",
-      entity: "user",
+      action: 'DELETE_USER',
+      entity: 'user',
       entityId: String(user._id),
       entityName: `${user.name} (${user.email})`,
       details: `Eliminó al usuario con rol ${user.role}`,
       ip: req.ip,
     });
 
-    res.json({ message: "Usuario eliminado correctamente" });
+    res.json({ message: 'Usuario eliminado correctamente' });
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar el usuario" });
+    res.status(500).json({ message: 'Error al eliminar el usuario' });
   }
 };
 
