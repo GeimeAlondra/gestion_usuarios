@@ -1,0 +1,161 @@
+<app-manga-navbar />
+
+<div class="activity-page">
+
+  <div class="activity-header">
+    <div>
+      <h2 class="activity-title">
+        <i class="bi bi-clock-history me-2"></i>
+        Historial de actividad
+      </h2>
+      <p class="activity-subtitle">{{ totalLogs }} registros encontrados</p>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  @if (isSearch === true) {
+
+    <div class="filters-card">
+      <div class="filters-grid">
+
+        <div class="filter-group">
+          <label class="filter-label">Acción</label>
+          <select class="filter-select" [(ngModel)]="filters.action">
+            <option value="">Todas</option>
+            <option *ngFor="let a of actions" [value]="a.value">{{ a.label }}</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Desde</label>
+          <input type="date" class="filter-input" [(ngModel)]="filters.from" />
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Hasta</label>
+          <input type="date" class="filter-input" [(ngModel)]="filters.to" />
+        </div>
+
+      </div>
+
+      <div class="filters-actions">
+        <button class="btn-filter-reset" (click)="resetFilters()">
+          <i class="bi bi-arrow-counterclockwise"></i>
+          Limpiar filtros
+        </button>
+        <button class="btn-filter-apply" (click)="applyFilters()">
+          <i class="bi bi-funnel-fill"></i>
+          Aplicar
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (loadError) {
+    <div class="alert-error">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>{{ loadError }}
+    </div>
+  }
+
+  @if (isLoading) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <span>Cargando historial...</span>
+    </div>
+  }
+
+  @if (!isLoading && logs.length === 0) {
+    <div class="empty-state">
+      <i class="bi bi-inbox-fill empty-icon"></i>
+      <p>No hay registros de actividad con los filtros seleccionados.</p>
+    </div>
+  }
+
+  @if (!isLoading && logs.length > 0) {
+    <div class="table-wrapper">
+      <table class="activity-table">
+        <thead>
+          <tr>
+            <th>Editor</th>
+            <th>Rol</th>
+            <th>Acción</th>
+            <th>Entidad</th>
+            <th>Detalles</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of logs" class="table-row">
+
+            <!-- Editor -->
+            <td class="td-user">
+              <div class="user-info">
+                <span class="user-name">{{ log.user?.name ?? '—' }}</span>
+                <span class="user-email">{{ log.user?.email ?? '' }}</span>
+              </div>
+            </td>
+
+            <!-- Rol -->
+            <td>
+              <span class="role-badge role-editor">
+                {{ log.userRole }}
+              </span>
+            </td>
+
+            <!-- Acción -->
+            <td>
+              <span class="action-badge" [ngClass]="getActionClass(log.action)">
+                {{ log.actionLabel }}
+              </span>
+            </td>
+
+            <!-- Entidad -->
+            <td class="td-entity">
+              <div class="entity-info">
+                <i class="bi" [ngClass]="getEntityIcon(log.entity)" class="entity-icon"></i>
+                <span class="entity-name">{{ log.entityName ?? '—' }}</span>
+              </div>
+            </td>
+
+            <!-- Detalles -->
+            <td class="td-details">
+              <span class="details-text" [title]="log.details ?? ''">
+                {{ log.details ?? '—' }}
+              </span>
+            </td>
+
+            <!-- Fecha -->
+            <td class="td-date">
+              <span class="date-main">{{ log.createdAt | date:'dd/MM/yyyy' }}</span>
+              <span class="date-time">{{ log.createdAt | date:'HH:mm:ss' }}</span>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+          <i class="bi bi-chevron-left"></i>
+        </button>
+
+        <button
+          *ngFor="let p of pages"
+          class="page-btn"
+          [class.page-active]="p === currentPage"
+          (click)="goToPage(p)">
+          {{ p }}
+        </button>
+
+        <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+          <i class="bi bi-chevron-right"></i>
+        </button>
+
+        <span class="page-info">Página {{ currentPage }} de {{ totalPages }}</span>
+      </div>
+    }
+  }
+
+</div>

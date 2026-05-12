@@ -1,0 +1,114 @@
+<app-manga-navbar/>
+<div class="layout">
+
+  <main class="main-content">
+    <div class="form-card">
+      <h2 class="form-title">{{ isEditMode ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+
+      @if (isLoadingUser) {
+        <p class="loading-msg">Cargando datos del usuario...</p>
+      }
+
+      @if (serverError) {
+        <div class="alert alert--error">{{ serverError }}</div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+
+        <div class="field">
+          <label class="label" for="name">Nombre</label>
+          <input
+            id="name"
+            type="text"
+            class="input"
+            [class.input--error]="name.invalid && name.touched"
+            formControlName="name"
+            placeholder="Nombre completo"
+          />
+          @if (name.invalid && name.touched) {
+            <span class="error-msg">
+              @if (name.errors?.['required']) { El nombre es obligatorio. }
+              @else if (name.errors?.['minlength']) { Mínimo 2 caracteres. }
+            </span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="label" for="email">Correo electrónico</label>
+          <input
+            id="email"
+            type="email"
+            class="input"
+            [class.input--error]="email.invalid && email.touched"
+            formControlName="email"
+            placeholder="correo@ejemplo.com"
+          />
+          @if (email.invalid && email.touched) {
+            <span class="error-msg">
+              @if (email.errors?.['required']) { El correo es obligatorio. }
+              @else if (email.errors?.['pattern']) { Ingresa un correo válido. }
+            </span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="label" for="password">
+            Contraseña
+            @if (isEditMode) {
+              <span class="label-hint">(dejar vacío para no cambiar)</span>
+            }
+          </label>
+          <input
+            id="password"
+            type="password"
+            class="input"
+            [class.input--error]="password.invalid && password.touched"
+            formControlName="password"
+            placeholder="{{ isEditMode ? 'Nueva contraseña (opcional)' : 'Mínimo 6 caracteres' }}"
+          />
+          @if (password.invalid && password.touched) {
+            <span class="error-msg">
+              @if (password.errors?.['required']) { La contraseña es obligatoria. }
+              @else if (password.errors?.['minlength']) { Mínimo 6 caracteres. }
+            </span>
+          }
+        </div>
+
+        <div class="field">
+          <label class="label" for="role">Rol</label>
+          <select
+            id="role"
+            class="input"
+            formControlName="role"
+          >
+            <option value="Admin">Admin</option>
+            <option value="Editor">Editor</option>
+            <option value="Viewer">Viewer</option>
+          </select>
+        </div>
+
+        @if (isEditMode) {
+          <div class="field field--inline">
+            <label class="label" for="isActive">Estado</label>
+            <select
+              id="isActive"
+              class="input"
+              formControlName="isActive"
+            >
+              <option [ngValue]="true">Activo</option>
+              <option [ngValue]="false">Inactivo</option>
+            </select>
+          </div>
+        }
+
+        <div class="actions">
+          <button type="button" class="btn btn--secondary" (click)="onCancel()">Cancelar</button>
+          <button type="submit" class="btn btn--primary" [disabled]="isSaving">
+            {{ isSaving ? 'Guardando...' : (isEditMode ? 'Guardar cambios' : 'Crear usuario') }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </main>
+</div>
