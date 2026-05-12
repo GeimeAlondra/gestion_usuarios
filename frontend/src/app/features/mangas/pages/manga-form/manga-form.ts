@@ -73,8 +73,8 @@ export class MangaFormComponent implements OnInit {
       this.mangaService.getManga(this.mangaId).subscribe((manga) => {
         this.form.patchValue({
           ...manga,
-          genres: manga.genres?.map((g: any) => g._id),
-          mainGenre: manga.mainGenre?._id,
+          genres: manga.genres?.map((g: any) => typeof g === 'string' ? g : g._id),
+          mainGenre: typeof manga.mainGenre === 'string' ? manga.mainGenre : manga.mainGenre?._id,
         });
 
         if (manga.coverUrl) {
